@@ -278,5 +278,19 @@
 
             return cache[taskId] = true;
         }
+
+        public void AdvanceStatus(Guid taskId)
+        {
+            var task = _tasksById[taskId];
+            switch (task.Status)
+            {
+                case TaskStatus.NotStarted or TaskStatus.Completed:
+                    task.Start();
+                    break;
+                case TaskStatus.Started:
+                    task.Complete();
+                    break;
+            }
+        }
     }
 }
