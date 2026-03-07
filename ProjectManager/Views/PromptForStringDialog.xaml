@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ProjectManager.Views.PromptForStringDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Add new task"
+        Title="{Binding Title}"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
