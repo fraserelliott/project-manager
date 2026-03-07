@@ -37,7 +37,10 @@
                     <TextBlock Text="{Binding Id}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}">
-                    <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Name"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Name"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" Margin="4,0,0,0" VerticalAlignment="Center"  ToolTip="Task names must be unique within the project."/>
+                    </StackPanel>
                     <TextBox Text="{Binding FormName}" KeyDown="TextBox_KeyDown" IsReadOnly="{Binding IsNotEditing}" MinWidth="200" Style="{StaticResource FieldTextBoxWithError}" Tag="{Binding HasNameError}" />
                     <Grid Visibility="{Binding HasNameError, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,4,0,0">
                         <Grid.ColumnDefinitions>
@@ -52,7 +55,10 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel Grid.Column="2"  Style="{StaticResource FieldContainer}">
-                    <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Priority"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Priority"/>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" Margin="4,0,0,0" VerticalAlignment="Center"  ToolTip="Priority accepts any integer value."/>
+                    </StackPanel>
                     <TextBox Text="{Binding FormPriority}" KeyDown="TextBox_KeyDown" IsReadOnly="{Binding IsNotEditing}" Style="{StaticResource FieldTextBoxWithError}" Tag="{Binding HasPriorityError}"/>
                     <Button Grid.Column="1" Margin="8,4,0,0" ToolTip="Restore original priority" Command="{Binding RestorePriorityCommand}" Style="{StaticResource PrimaryIconButton}" Visibility="{Binding HasPriorityError, Converter={StaticResource BoolToVisibilityConverter}}">
                         <TextBlock Text="&#xE7A7;" />
