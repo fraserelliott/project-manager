@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProjectManager.Models.Domain;
 using ProjectManager.Services;
 using ProjectManager.Stores;
 using ProjectManager.Views;
@@ -20,6 +19,7 @@ public sealed class TasksViewModel : ObservableObject
 
     public ObservableCollection<TaskItemViewModel> Tasks { get; }
     private readonly Dictionary<Guid, TaskItemViewModel> _tasksById;
+    private readonly Dictionary<Guid, TaskDetailsWindow> _openTaskWindows = new();
 
     private TaskItemViewModel? _selectedTask;
     public TaskItemViewModel? SelectedTask
@@ -90,16 +90,32 @@ public sealed class TasksViewModel : ObservableObject
 
     private void ShowDetails(Guid id)
     {
-        if (_session.GetTask(id) is not TaskItem task)
+        if (!_tasksById.TryGetValue(id, out var vm))
             return;
 
-        var vm = new TaskItemViewModel(_session, task);
+        if (_openTaskWindows.TryGetValue(id, out var existingWindow))
+        {
+            if (existingWindow.WindowState == WindowState.Minimized)
+                existingWindow.WindowState = WindowState.Normal;
+
+            existingWindow.Activate();
+            existingWindow.Focus();
+            return;
+        }
+
         var window = new TaskDetailsWindow
         {
             DataContext = vm,
             Owner = Application.Current.MainWindow
         };
 
+        window.Closed += (_, _) =>
+        {
+            _openTaskWindows.Remove(id);
+            vm.RestoreName();
+            vm.IsEditing = false;
+        };
+        _openTaskWindows[id] = window;
         window.Show();
     }
 

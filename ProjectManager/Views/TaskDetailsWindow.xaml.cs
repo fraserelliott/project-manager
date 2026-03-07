@@ -1,25 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace ProjectManager.Views
+namespace ProjectManager.Views;
+
+/// <summary>
+/// Interaction logic for TaskDetailsWindow.xaml
+/// </summary>
+public partial class TaskDetailsWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for TaskDetailsWindow.xaml
-    /// </summary>
-    public partial class TaskDetailsWindow : Window
+    public TaskDetailsWindow()
     {
-        public TaskDetailsWindow()
+        InitializeComponent();
+    }
+
+    private void TextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
         {
-            InitializeComponent();
+            var textBox = (TextBox)sender;
+            var binding = textBox.GetBindingExpression(TextBox.TextProperty);
+            binding?.UpdateSource();
+            e.Handled = true;
         }
     }
 }

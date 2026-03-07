@@ -38,7 +38,18 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}">
                     <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Name"/>
-                    <TextBox Text="{Binding Name,Mode=OneWay}" IsReadOnly="{Binding IsNotEditing}" MinWidth="200" Style="{StaticResource FieldTextBox}" />
+                    <TextBox Text="{Binding FormName}" KeyDown="TextBox_KeyDown" IsReadOnly="{Binding IsNotEditing}" MinWidth="200" Style="{StaticResource FieldTextBoxWithError}" />
+                    <Grid Visibility="{Binding HasNameError, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding NameErrorMessage}" Foreground="{StaticResource BtnDanger}" VerticalAlignment="Center" />
+                        <Button Grid.Column="1" Margin="8,0,0,0" ToolTip="Restore original name" Command="{Binding RestoreNameCommand}" Style="{StaticResource PrimaryIconButton}">
+                            <TextBlock Text="&#xE7A7;" />
+                        </Button>
+                    </Grid>
                 </StackPanel>
                 <StackPanel Grid.Column="2"  Style="{StaticResource FieldContainer}" >
                     <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Priority"/>

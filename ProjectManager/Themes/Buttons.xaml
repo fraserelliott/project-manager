@@ -48,6 +48,13 @@
         </Setter>
     </Style>
 
+    <Style x:Key="PrimaryIconButton" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="Padding" Value="2,2"/>
+        <Setter Property="MinHeight" Value="22"/>
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+        <Setter Property="Margin" Value="0, 4"/>
+    </Style>
+
     <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonBaseStyle}">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>

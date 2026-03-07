@@ -84,8 +84,12 @@ public sealed class ProjectSession
 
         if (task == null)
             return new OperationResult(false, new RefreshProject(), "Task not found.");
+        if (string.IsNullOrEmpty(newName))
+            return new OperationResult(false, new RefreshProject(), "Task name must be provided.");
         if (string.Equals(task.Name, newName, StringComparison.OrdinalIgnoreCase))
             return new OperationResult(true, new RefreshNone());
+        if (Project.HasTaskWithName(newName))
+            return new OperationResult(false, new RefreshNone(), "A task with this name already exists.");
 
         Project.RenameTask(taskId, newName);
         MarkDirty();
