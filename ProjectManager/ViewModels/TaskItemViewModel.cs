@@ -12,14 +12,21 @@ public sealed class TaskItemViewModel : ObservableObject
     private readonly TaskItem _task;
     private string? _draftName;
     private string? _nameErrorMessage;
+    private string? _draftPriority;
+    private bool _hasPriorityError = false;
 
+    public TasksViewModel Owner { get; }
     public IRelayCommand RestoreNameCommand { get; }
+    public IRelayCommand RestorePriorityCommand { get; }
+    public IRelayCommand<Guid> AdvanceStatusCommand => Owner.AdvanceStatusCommand;
 
-    public TaskItemViewModel(ProjectSession session, TaskItem task)
+    public TaskItemViewModel(ProjectSession session, TaskItem task, TasksViewModel owner)
     {
         _session = session;
         _task = task;
+        Owner = owner;
         RestoreNameCommand = new RelayCommand(execute: RestoreName);
+        RestorePriorityCommand = new RelayCommand(execute: RestorePriority);
     }
 
     public Guid Id => _task.Id;
@@ -56,6 +63,30 @@ public sealed class TaskItemViewModel : ObservableObject
 
     public string Description => _task.Description;
     public int Priority => _task.Priority;
+    public string FormPriority
+    {
+        get => _draftPriority == null ? _task.Priority.ToString() : _draftPriority;
+        set
+        {
+            if (int.TryParse(value, out var priority))
+            {
+                _task.SetPriority(priority);
+                _draftPriority = null;
+                _hasPriorityError = false;
+            }
+            else
+            {
+                _draftPriority = value;
+                _hasPriorityError = true;
+            }
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(Priority));
+            OnPropertyChanged(nameof(HasPriorityError));
+        }
+    }
+    public bool HasPriorityError => _hasPriorityError;
+
     public TaskStatus Status => _task.Status;
 
     public bool IsBlocked => Status != TaskStatus.Completed && _session.IsTaskBlocked(Id);
@@ -90,6 +121,13 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(ButtonText));
     }
 
+    public void Reset()
+    {
+        RestoreName();
+        RestorePriority();
+        IsEditing = false;
+    }
+
     public void RestoreName()
     {
         _draftName = null;
@@ -98,5 +136,14 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(FormName));
         OnPropertyChanged(nameof(NameErrorMessage));
         OnPropertyChanged(nameof(HasNameError));
+    }
+
+    public void RestorePriority()
+    {
+        _draftPriority = null;
+        _hasPriorityError = false;
+
+        OnPropertyChanged(nameof(FormPriority));
+        OnPropertyChanged(nameof(HasPriorityError));
     }
 }

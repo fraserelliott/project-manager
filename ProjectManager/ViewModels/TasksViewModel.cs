@@ -38,7 +38,7 @@ public sealed class TasksViewModel : ObservableObject
 
         foreach (var task in _session.Project.Tasks)
         {
-            var vm = new TaskItemViewModel(_session, task);
+            var vm = new TaskItemViewModel(_session, task, this);
 
             Tasks.Add(vm);
             _tasksById[vm.Id] = vm;
@@ -54,7 +54,9 @@ public sealed class TasksViewModel : ObservableObject
             if (result.Refresh is RefreshTask r)
             {
                 var task = session.GetTask(r.TaskId);
-                Tasks.Add(new TaskItemViewModel(session, task));
+                var vm = new TaskItemViewModel(session, task, this);
+                Tasks.Add(vm);
+                _tasksById.Add(task.Id, vm);
             }
         });
 
@@ -112,8 +114,7 @@ public sealed class TasksViewModel : ObservableObject
         window.Closed += (_, _) =>
         {
             _openTaskWindows.Remove(id);
-            vm.RestoreName();
-            vm.IsEditing = false;
+            vm.Reset();
         };
         _openTaskWindows[id] = window;
         window.Show();

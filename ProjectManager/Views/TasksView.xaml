@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,0,0,8">
-            <Button Content="New Task" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding NewTaskCommand}" HorizontalAlignment="Left" />
+            <Button Content="New Task" Style="{StaticResource PrimaryButton}" Command="{Binding NewTaskCommand}" HorizontalAlignment="Left" />
         </Grid>
 
         <DataGrid Grid.Row="1"
@@ -100,10 +100,7 @@
                 <DataGridTemplateColumn Header="Actions">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding ButtonText}"
-                Command="{Binding DataContext.AdvanceStatusCommand,RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                CommandParameter="{Binding Id}"
-                Style="{StaticResource PrimaryButtonCompactStyle}" />
+                            <Button Content="{Binding ButtonText}" Command="{Binding AdvanceStatusCommand}" CommandParameter="{Binding Id}" Style="{StaticResource PrimaryButtonCompact}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -111,7 +108,7 @@
                 <DataGridTemplateColumn Header="Actions">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Details" Command="{Binding DataContext.ShowDetailsCommand,RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding Id}" Style="{StaticResource PrimaryButtonCompactStyle}" />
+                            <Button Content="Details" Command="{Binding DataContext.ShowDetailsCommand,RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding Id}" Style="{StaticResource PrimaryButtonCompact}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

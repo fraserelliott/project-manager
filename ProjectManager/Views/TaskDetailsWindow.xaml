@@ -38,8 +38,8 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}">
                     <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Name"/>
-                    <TextBox Text="{Binding FormName}" KeyDown="TextBox_KeyDown" IsReadOnly="{Binding IsNotEditing}" MinWidth="200" Style="{StaticResource FieldTextBoxWithError}" />
-                    <Grid Visibility="{Binding HasNameError, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBox Text="{Binding FormName}" KeyDown="TextBox_KeyDown" IsReadOnly="{Binding IsNotEditing}" MinWidth="200" Style="{StaticResource FieldTextBoxWithError}" Tag="{Binding HasNameError}" />
+                    <Grid Visibility="{Binding HasNameError, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,4,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -51,24 +51,28 @@
                         </Button>
                     </Grid>
                 </StackPanel>
-                <StackPanel Grid.Column="2"  Style="{StaticResource FieldContainer}" >
+                <StackPanel Grid.Column="2"  Style="{StaticResource FieldContainer}">
                     <TextBlock Style="{StaticResource VerticalFieldLabel}" Text="Priority"/>
-                    <TextBox Text="{Binding Priority,Mode=OneWay}" IsReadOnly="{Binding IsNotEditing}" Style="{StaticResource FieldTextBox}"/>
+                    <TextBox Text="{Binding FormPriority}" KeyDown="TextBox_KeyDown" IsReadOnly="{Binding IsNotEditing}" Style="{StaticResource FieldTextBoxWithError}" Tag="{Binding HasPriorityError}"/>
+                    <Button Grid.Column="1" Margin="8,4,0,0" ToolTip="Restore original priority" Command="{Binding RestorePriorityCommand}" Style="{StaticResource PrimaryIconButton}" Visibility="{Binding HasPriorityError, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="&#xE7A7;" />
+                    </Button>
                 </StackPanel>
-                <ToggleButton Grid.Column="3" IsChecked="{Binding IsEditing, Mode=TwoWay}" Style="{StaticResource EditToggleButtonStyle}"/>
+                <StackPanel Grid.Column="3" Style="{StaticResource FieldContainer}">
+                    <ToggleButton IsChecked="{Binding IsEditing, Mode=TwoWay}" Style="{StaticResource EditToggleButton}" Margin="0,0,0,8"/>
+                    <Button Content="{Binding ButtonText}" Command="{Binding AdvanceStatusCommand}" CommandParameter="{Binding Id}" Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
             </Grid>
 
             <Grid Grid.Row="1" Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- TODO: tags control -->
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Tags"/>
                 <TextBlock Grid.Column="1" Text="Placeholder for tags" />
-                <Button Grid.Column="2" Content="Status" Style="{StaticResource PrimaryButtonStyle}"/>
             </Grid>
 
             <TextBlock Grid.Row="2" Style="{StaticResource VerticalFieldLabel}" Text="Description"/>
@@ -84,7 +88,7 @@
                 <!-- TODO: dependencies control -->
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Dependencies"/>
                 <TextBlock Grid.Column="1" Text="Placeholder for Dependencies" />
-                <Button Grid.Column="2" Content="Delete" Style="{StaticResource DangerButtonStyle}"/>
+                <Button Grid.Column="2" Content="Delete" Style="{StaticResource DangerButton}"/>
             </Grid>
         </Grid>
     </Border>

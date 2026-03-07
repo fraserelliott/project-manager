@@ -15,7 +15,7 @@
         <Setter Property="Margin" Value="6"/>
     </Style>
 
-    <Style x:Key="FieldButton" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+    <Style x:Key="FieldButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
         <!-- match FieldContainer spacing -->
         <Setter Property="Margin" Value="6"/>
         <!-- align with other controls under their label -->
@@ -26,23 +26,53 @@
     <Style x:Key="FieldTextBox" TargetType="TextBox">
         <Setter Property="Background" Value="{StaticResource DropdownBg}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="6,4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                  Margin="{TemplateBinding Padding}"/>
+                    </Border>
 
-        <Style.Triggers>
-            <Trigger Property="IsReadOnly" Value="True">
-                <Setter Property="Background" Value="{StaticResource BrushFieldReadOnlyBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
-                <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
-            </Trigger>
-        </Style.Triggers>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BrushFieldReadOnlyBackground}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="FieldTextBoxWithError"
        TargetType="TextBox"
        BasedOn="{StaticResource FieldTextBox}">
         <Style.Triggers>
-            <DataTrigger Binding="{Binding HasNameError}" Value="True">
-                <Setter Property="BorderBrush" Value="{StaticResource BtnDanger}"/>
-            </DataTrigger>
+            <!-- Error but NOT focused -->
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="False"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{StaticResource BtnDanger}" />
+            </MultiDataTrigger>
+
+            <!-- Error AND focused -->
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True"/>
+                    <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{StaticResource FocusedWithError}" />
+            </MultiDataTrigger>
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
