@@ -108,10 +108,20 @@ public sealed class TaskItemViewModel : ObservableObject
                 break;
 
             case CreateTagOption create:
-                //OpenCreateTagDialog(create.Name);
+                OpenCreateTagDialog(create.Name);
                 ResetTagPicker();
                 break;
         }
+    }
+
+    private void OpenCreateTagDialog(string name)
+    {
+        var result = new TagDialogService().PromptNewTag((name, color) =>
+        {
+            return _session.AddTag(_task.Id, name, color);
+        }, name);
+
+        Owner.TryAddTag(result);
     }
 
     private void AddTag(Guid tagId)
@@ -219,6 +229,10 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(IsBlocked));
         OnPropertyChanged(nameof(IsStale));
         OnPropertyChanged(nameof(ButtonText));
+        OnPropertyChanged(nameof(Tags));
+        OnPropertyChanged(nameof(HasPriorityError));
+        OnPropertyChanged(nameof(Status));
+        OnPropertyChanged(nameof(AvailableTagOptions));
     }
 
     public void Reset()

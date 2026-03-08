@@ -1,4 +1,5 @@
 ﻿using ProjectManager.Models.Domain;
+using System.Windows.Media;
 
 namespace ProjectManager.Stores;
 
@@ -6,6 +7,7 @@ public abstract record RefreshScope;
 public record RefreshNone : RefreshScope;
 public record RefreshProject : RefreshScope;
 public record RefreshTask(Guid TaskId) : RefreshScope;
+public record RefreshTag(Guid TagId) : RefreshScope;
 
 public record OperationResult(
     bool Success,
@@ -97,4 +99,22 @@ public sealed class ProjectSession
     }
 
     public TaskItem? GetTask(Guid id) => Project.GetTask(id);
+
+    public OperationResult AddTag(Guid taskId, string name, Color? color)
+    {
+        name = (name ?? "").Trim();
+        var task = Project.GetTask(taskId);
+
+        if (task == null)
+            return new OperationResult(false, new RefreshProject(), "Task not found.");
+        if (Project.HasTagWithName(name))
+            return new OperationResult(false, new RefreshNone(), "A tag with this name already exists.");
+        var tag = Project.AddTag(name, color);
+        task.AddTag(tag.Id);
+
+        MarkDirty();
+        return new OperationResult(true, new RefreshTag(tag.Id));
+    }
+
+    public Tag? GetTag(Guid id) => Project.GetTag(id);
 }

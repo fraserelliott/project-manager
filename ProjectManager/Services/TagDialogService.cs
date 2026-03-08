@@ -8,9 +8,9 @@ namespace ProjectManager.Services;
 
 public sealed class TagDialogService
 {
-    public OperationResult? PromptNewTag(Func<string, Color?, OperationResult> tryAccept)
+    public OperationResult? PromptNewTag(Func<string, Color?, OperationResult> tryAccept, string startingName)
     {
-        return OpenTagDialog(tryAccept, "New Tag", "Create", null, null);
+        return OpenTagDialog(tryAccept, "New Tag", "Create", startingName, null);
     }
 
     public OperationResult? PromptTagUpdate(Func<string, Color?, OperationResult> tryAccept, string startingName, Color? startingColor)

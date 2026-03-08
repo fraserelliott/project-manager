@@ -55,7 +55,7 @@
                                 <!-- Blocked -->
                                 <Border Style="{StaticResource AlertPill}" Tag="{Binding IsBlocked}" Background="{StaticResource BtnDanger}">
                                     <TextBlock Style="{StaticResource PillText}">
-                                        <Run FontFamily="Segoe MDL2 Assets" Text="&#xE711;"/>
+                                        <Run FontFamily="Segoe MDL2 Assets" Text="&#xE72E;"/>
                                         <Run Text="  Blocked"/>
                                     </TextBlock>
                                 </Border>
