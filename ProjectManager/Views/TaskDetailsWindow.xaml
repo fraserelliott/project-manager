@@ -18,6 +18,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- header -->
@@ -96,12 +97,24 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Dependencies"/>
                 <controls:DependenciesDisplay Grid.Column="1" Dependencies="{Binding Dependencies}" ShowRemoveButton="{Binding IsEditing}" RemoveDependencyCommand="{Binding RemoveTagCommand}"/>
-                <Button Grid.Column="2" Content="Delete" Command="{Binding ConfirmDeleteTask}" Style="{StaticResource DangerButton}"/>
+                <TextBlock Grid.Column="2" Style="{StaticResource HorizontalFieldLabel}" Text="Add Dependency"/>
+                <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}" ItemContainerStyle="{StaticResource FieldComboBoxItem}" Width="180" IsEditable="True" IsTextSearchEnabled="False"
+                          IsEnabled="{Binding IsEditing}" StaysOpenOnEdit="True" ItemsSource="{Binding AvailableDependencyOptions}" SelectedItem="{Binding SelectedDependencyOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Text="{Binding DependencySearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="DisplayText" PreviewTextInput="TagComboBox_PreviewTextInput"
+                          Visibility="{Binding HasAvailableDependencies, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <TextBlock Grid.Column="3" Visibility="{Binding HasAvailableDependencies, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <Run Text="None Available"/>
+                    <Run FontFamily="Segoe MDL2 Assets" Text="&#xE946;" ToolTip="All valid dependency options have already been used, or would create a cycle."/>
+                </TextBlock>
             </Grid>
+
+            <!-- delete button -->
+            <Button Grid.Row="5" Margin="0,8,0,0" HorizontalAlignment="Right" Content="Delete" Command="{Binding ConfirmDeleteTask}" Style="{StaticResource DangerButton}"/>
         </Grid>
     </Border>
 </Window>

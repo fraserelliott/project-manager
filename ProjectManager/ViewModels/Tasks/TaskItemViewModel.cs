@@ -18,9 +18,10 @@ public sealed class TaskItemViewModel : ObservableObject
     private string? _draftPriority;
     private bool _hasPriorityError = false;
     private string _tagSearchText = "";
+    private string _dependencySearchText = "";
     private AddTagOption? _selectedTagOption;
-    public ObservableCollection<DependencyViewModel> Dependencies { get; }
-
+    private AddDependencyOption? _selectedDependencyOption;
+    public ObservableCollection<DependencyViewModel> Dependencies { get; init; }
     public TasksViewModel Owner { get; }
     public IRelayCommand RestoreNameCommand { get; }
     public IRelayCommand RestorePriorityCommand { get; }
@@ -76,6 +77,18 @@ public sealed class TaskItemViewModel : ObservableObject
         }
     }
 
+    public string DependencySearchText
+    {
+        get => _dependencySearchText;
+        set
+        {
+            if (SetProperty(ref _dependencySearchText, value))
+            {
+                OnPropertyChanged(nameof(AvailableDependencyOptions));
+            }
+        }
+    }
+
     public AddTagOption? SelectedTagOption
     {
         get => _selectedTagOption;
@@ -84,6 +97,18 @@ public sealed class TaskItemViewModel : ObservableObject
             if (SetProperty(ref _selectedTagOption, value) && value is not null)
             {
                 HandleTagOptionSelected(value);
+            }
+        }
+    }
+
+    public AddDependencyOption? SelectedDependencyOption
+    {
+        get => _selectedDependencyOption;
+        set
+        {
+            if (SetProperty(ref _selectedDependencyOption, value) && value is not null)
+            {
+                HandleDependencyOptionSelected(value);
             }
         }
     }
@@ -121,6 +146,32 @@ public sealed class TaskItemViewModel : ObservableObject
         }
     }
 
+    public bool HasAvailableDependencies => ComputeAvailableDependencies("").Count > 0;
+
+    public IReadOnlyList<AddDependencyOption> AvailableDependencyOptions => ComputeAvailableDependencies(DependencySearchText);
+
+    private IReadOnlyList<AddDependencyOption> ComputeAvailableDependencies(string searchTerm)
+    {
+        List<AddDependencyOption> options = new();
+
+        string search = searchTerm.Trim();
+
+        foreach (TaskItemViewModel task in Owner.Tasks)
+        {
+            bool alreadyOnTask = _task.DependencyIds.Contains(task.Id);
+            if (alreadyOnTask || task.Id == Id)
+                continue;
+
+            if (!_session.WouldCreateCycle(Id, task.Id))
+            {
+                if (search.Length == 0 || task.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                    options.Add(new AddDependencyOption(task));
+            }
+        }
+
+        return options;
+    }
+
     private void HandleTagOptionSelected(AddTagOption option)
     {
         switch (option)
@@ -135,6 +186,15 @@ public sealed class TaskItemViewModel : ObservableObject
                 ResetTagPicker();
                 break;
         }
+    }
+
+    private void HandleDependencyOptionSelected(AddDependencyOption option)
+    {
+        if (!_task.AddDependency(option.Task.Id)) return;
+        var dep = _session.GetTask(option.Task.Id);
+        if (dep is null) return;
+        Dependencies.Add(new DependencyViewModel(_task, dep));
+        Owner.RefreshAll();
     }
 
     private void OpenCreateTagDialog(string name)
@@ -255,6 +315,8 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(HasPriorityError));
         OnPropertyChanged(nameof(Status));
         OnPropertyChanged(nameof(AvailableTagOptions));
+        OnPropertyChanged(nameof(AvailableDependencyOptions));
+        OnPropertyChanged(nameof(HasAvailableDependencies));
 
         foreach (var dependency in Dependencies)
         {

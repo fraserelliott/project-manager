@@ -65,6 +65,7 @@ public sealed class TasksViewModel : ObservableObject
                 var vm = new TaskItemViewModel(session, task, this);
                 Tasks.Add(vm);
                 _tasksById.Add(task.Id, vm);
+                RefreshAll();
             }
         });
 

@@ -2,7 +2,7 @@
 
 public sealed class ExistingTagOption : AddTagOption
 {
-    public TagViewModel Tag { get; }
+    public TagViewModel Tag { get; init; }
 
     public ExistingTagOption(TagViewModel tag)
     {

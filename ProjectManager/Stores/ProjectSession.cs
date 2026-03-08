@@ -117,4 +117,9 @@ public sealed class ProjectSession
     }
 
     public Tag? GetTag(Guid id) => Project.GetTag(id);
+
+    public bool WouldCreateCycle(Guid taskId, Guid dependencyId)
+    {
+        return Project.WouldCreateCycle(taskId, dependencyId);
+    }
 }
