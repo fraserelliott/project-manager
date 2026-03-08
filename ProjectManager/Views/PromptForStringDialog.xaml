@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding Label}" Margin="0,0,0,6"/>
+        <TextBlock Grid.Row="0" Text="{Binding Label}" Margin="0,0,0,6"/>
 
         <TextBox Grid.Row="1" MinWidth="320" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" x:Name="ValueTextBox" Margin="0,0,0,12" Style="{StaticResource FieldTextBox}"/>
 

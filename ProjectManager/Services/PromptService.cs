@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace ProjectManager.Services;
 
-public sealed class PromptService : IPromptService
+public sealed class PromptService
 {
     public OperationResult? PromptForString(
         string title,

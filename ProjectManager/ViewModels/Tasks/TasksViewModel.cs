@@ -32,7 +32,7 @@ public sealed class TasksViewModel : ObservableObject
 
     private readonly Dictionary<Guid, TagViewModel> _tags = new();
 
-    public TasksViewModel(ProjectSession session, IPromptService promptService)
+    public TasksViewModel(ProjectSession session, PromptService promptService)
     {
         _session = session;
         Tasks = new ObservableCollection<TaskItemViewModel>();

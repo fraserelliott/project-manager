@@ -20,7 +20,7 @@ public partial class MainWindow : Window
         project.AddDependency(taskA.Id, b.Id);
         project.AddDependency(b.Id, c.Id);
 
-        var tag = project.AddTag("test", Colors.Red);
+        var tag = project.AddTag("test", (Color)ColorConverter.ConvertFromString("#EF4444"));
         taskA.AddTag(tag.Id);
 
         var tag2 = project.AddTag("a longer tag name", Colors.Green);
@@ -32,7 +32,13 @@ public partial class MainWindow : Window
 
         DataContext = new ShellViewModel(session);
 
-        //var detailsWindow = new TaskDetailsWindow();
-        //detailsWindow.Show();
+        //var tagWindow = new TagDialog();
+        //tagWindow.DataContext = new TagDialogViewModel(TagHandle, "Edit Tag", "Save", tag.Name, tag.Color);
+        //tagWindow.Show();
+    }
+
+    private OperationResult TagHandle(string value)
+    {
+        return new OperationResult(true, new RefreshNone(), value);
     }
 }
