@@ -52,23 +52,7 @@ public sealed class TasksViewModel : ObservableObject
             _tags[tag.Id] = vm;
         }
 
-        NewTaskCommand = new RelayCommand(() =>
-        {
-            var result = promptService.PromptForString("Add task", "Task name", "Add", name => session.AddTask(name));
-
-            if (result is not { Success: true })
-                return;
-
-            if (result.Refresh is RefreshTask r)
-            {
-                var task = session.GetTask(r.TaskId);
-                var vm = new TaskItemViewModel(session, task, this);
-                Tasks.Add(vm);
-                _tasksById.Add(task.Id, vm);
-                RefreshAll();
-            }
-        });
-
+        NewTaskCommand = new RelayCommand(execute: HandleNewTask);
         AdvanceStatusCommand = new RelayCommand<Guid>(execute: AdvanceStatus, canExecute: id => !_session.IsTaskBlocked(id));
         ShowDetailsCommand = new RelayCommand<Guid>(execute: ShowDetails);
     }
@@ -94,6 +78,23 @@ public sealed class TasksViewModel : ObservableObject
             case RefreshTag(var tagId):
                 RefreshAll();
                 break;
+        }
+    }
+
+    private void HandleNewTask()
+    {
+        var result = new PromptService().PromptForString("Add task", "Task name", "Add", name => _session.AddTask(name));
+
+        if (result is not { Success: true })
+            return;
+
+        if (result.Refresh is RefreshTask r)
+        {
+            var task = _session.GetTask(r.TaskId);
+            var vm = new TaskItemViewModel(_session, task, this);
+            Tasks.Add(vm);
+            _tasksById.Add(task.Id, vm);
+            RefreshAll();
         }
     }
 

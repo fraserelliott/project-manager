@@ -159,6 +159,21 @@ public sealed class ProjectSession
         return new OperationResult(true, new RefreshProject());
     }
 
+    public OperationResult RemoveDependencyFromTask(Guid taskId, Guid dependencyId)
+    {
+        var task = GetTask(taskId);
+        if (task is null)
+            return new OperationResult(false, new RefreshProject(), "Task not found.");
+
+        var dependency = GetTask(dependencyId);
+        if (task is null)
+            return new OperationResult(false, new RefreshProject(), "Dependency not found.");
+
+        task.RemoveDependency(dependencyId);
+        MarkDirty();
+        return new OperationResult(true, new RefreshProject());
+    }
+
     public OperationResult UpdatePriorityOnTask(Guid taskId, int priority)
     {
         var task = GetTask(taskId);

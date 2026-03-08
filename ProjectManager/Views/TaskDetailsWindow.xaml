@@ -101,7 +101,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Dependencies"/>
-                <controls:DependenciesDisplay Grid.Column="1" Dependencies="{Binding Dependencies}" ShowRemoveButton="{Binding IsEditing}" RemoveDependencyCommand="{Binding RemoveTagCommand}"/>
+                <controls:DependenciesDisplay Grid.Column="1" Dependencies="{Binding Dependencies}" ShowRemoveButton="{Binding IsEditing}" RemoveDependencyCommand="{Binding RemoveDependencyCommand}"/>
                 <TextBlock Grid.Column="2" Style="{StaticResource HorizontalFieldLabel}" Text="Add Dependency"/>
                 <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}" ItemContainerStyle="{StaticResource FieldComboBoxItem}" Width="180" IsEditable="True" IsTextSearchEnabled="False"
                           IsEnabled="{Binding IsEditing}" StaysOpenOnEdit="True" ItemsSource="{Binding AvailableDependencyOptions}" SelectedItem="{Binding SelectedDependencyOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

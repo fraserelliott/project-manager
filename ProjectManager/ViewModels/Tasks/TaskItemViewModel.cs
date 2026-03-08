@@ -28,6 +28,7 @@ public sealed class TaskItemViewModel : ObservableObject
     public IRelayCommand ConfirmDeleteTask { get; }
     public IRelayCommand<Guid> AdvanceStatusCommand => Owner.AdvanceStatusCommand;
     public ICommand RemoveTagCommand { get; init; }
+    public ICommand RemoveDependencyCommand { get; init; }
 
     public IReadOnlyList<TagViewModel> Tags =>
     _task.TagIds
@@ -45,6 +46,7 @@ public sealed class TaskItemViewModel : ObservableObject
         RestorePriorityCommand = new RelayCommand(RestorePriority);
         ConfirmDeleteTask = new RelayCommand(ConfirmDelete);
         RemoveTagCommand = new RelayCommand<Guid>(RemoveTag);
+        RemoveDependencyCommand = new RelayCommand<Guid>(RemoveDependency);
 
         Dependencies = new ObservableCollection<DependencyViewModel>();
         foreach (Guid depId in task.DependencyIds)
@@ -57,14 +59,23 @@ public sealed class TaskItemViewModel : ObservableObject
 
     private void RemoveTag(Guid tagId)
     {
-        if (!_task.TagIds.Contains(tagId))
-            return;
-
         var result = _session.RemoveTagFromTask(Id, tagId);
         if (result.Success)
         {
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(AvailableTagOptions));
+        }
+    }
+
+    private void RemoveDependency(Guid dependencyId)
+    {
+        var result = _session.RemoveDependencyFromTask(Id, dependencyId);
+        if (result.Success)
+        {
+            var vm = Dependencies.FirstOrDefault(d => d.Id == dependencyId);
+            if (vm != null)
+                Dependencies.Remove(vm);
+            Owner.RefreshAll();
         }
     }
 
@@ -326,6 +337,7 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(AvailableTagOptions));
         OnPropertyChanged(nameof(AvailableDependencyOptions));
         OnPropertyChanged(nameof(HasAvailableDependencies));
+        OnPropertyChanged(nameof(Dependencies));
 
         foreach (var dependency in Dependencies)
         {
