@@ -24,4 +24,12 @@ public partial class TaskDetailsWindow : Window
             e.Handled = true;
         }
     }
+
+    private void TagComboBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        if (sender is ComboBox comboBox && !comboBox.IsDropDownOpen)
+        {
+            comboBox.IsDropDownOpen = true;
+        }
+    }
 }

@@ -81,7 +81,7 @@
                 <TextBlock Grid.Column="2" Style="{StaticResource HorizontalFieldLabel}" Text="Add Tag"/>
                 <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}" ItemContainerStyle="{StaticResource FieldComboBoxItem}" Width="180" IsEditable="True" IsTextSearchEnabled="False"
                   IsEnabled="{Binding IsEditing}" StaysOpenOnEdit="True" ItemsSource="{Binding AvailableTagOptions}" SelectedItem="{Binding SelectedTagOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  Text="{Binding TagSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="DisplayText" />
+                  Text="{Binding TagSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="DisplayText" PreviewTextInput="TagComboBox_PreviewTextInput"  />
             </Grid>
 
             <!-- description label -->
