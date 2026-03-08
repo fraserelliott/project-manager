@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using ProjectManager.Models.Domain;
 using ProjectManager.Services;
 using ProjectManager.Stores;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 using TaskStatus = ProjectManager.Models.Domain.TaskStatus;
 
 namespace ProjectManager.ViewModels.Tasks;
@@ -17,12 +19,14 @@ public sealed class TaskItemViewModel : ObservableObject
     private bool _hasPriorityError = false;
     private string _tagSearchText = "";
     private AddTagOption? _selectedTagOption;
+    public ObservableCollection<DependencyViewModel> Dependencies { get; }
 
     public TasksViewModel Owner { get; }
     public IRelayCommand RestoreNameCommand { get; }
     public IRelayCommand RestorePriorityCommand { get; }
     public IRelayCommand ConfirmDeleteTask { get; }
     public IRelayCommand<Guid> AdvanceStatusCommand => Owner.AdvanceStatusCommand;
+    public ICommand RemoveTagCommand { get; init; }
 
     public IReadOnlyList<TagViewModel> Tags =>
     _task.TagIds
@@ -39,6 +43,25 @@ public sealed class TaskItemViewModel : ObservableObject
         RestoreNameCommand = new RelayCommand(RestoreName);
         RestorePriorityCommand = new RelayCommand(RestorePriority);
         ConfirmDeleteTask = new RelayCommand(ConfirmDelete);
+        RemoveTagCommand = new RelayCommand<Guid>(RemoveTag);
+
+        Dependencies = new ObservableCollection<DependencyViewModel>();
+        foreach (Guid depId in task.DependencyIds)
+        {
+            TaskItem? dep = _session.GetTask(depId);
+            if (dep is not null)
+                Dependencies.Add(new DependencyViewModel(task, dep));
+        }
+    }
+
+    private void RemoveTag(Guid tagId)
+    {
+        if (!_task.TagIds.Contains(tagId))
+            return;
+
+        _task.RemoveTag(tagId);
+        OnPropertyChanged(nameof(Tags));
+        OnPropertyChanged(nameof(AvailableTagOptions));
     }
 
     public string TagSearchText
@@ -150,10 +173,7 @@ public sealed class TaskItemViewModel : ObservableObject
             {
                 _draftName = null;
                 _nameErrorMessage = null;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Name));
-                OnPropertyChanged(nameof(NameErrorMessage));
-                OnPropertyChanged(nameof(HasNameError));
+                Owner.RefreshAll();
             }
             else
             {
@@ -230,9 +250,16 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(IsStale));
         OnPropertyChanged(nameof(ButtonText));
         OnPropertyChanged(nameof(Tags));
+        OnPropertyChanged(nameof(HasNameError));
+        OnPropertyChanged(nameof(NameErrorMessage));
         OnPropertyChanged(nameof(HasPriorityError));
         OnPropertyChanged(nameof(Status));
         OnPropertyChanged(nameof(AvailableTagOptions));
+
+        foreach (var dependency in Dependencies)
+        {
+            dependency.Refresh();
+        }
     }
 
     public void Reset()

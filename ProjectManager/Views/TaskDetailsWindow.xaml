@@ -77,7 +77,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Tags"/>
-                <controls:TagsDisplay Grid.Column="1" Tags="{Binding Tags}"/>
+                <controls:TagsDisplay Grid.Column="1" Tags="{Binding Tags}" ShowRemoveButton="{Binding IsEditing}" RemoveTagCommand="{Binding RemoveTagCommand}"/>
                 <TextBlock Grid.Column="2" Style="{StaticResource HorizontalFieldLabel}" Text="Add Tag"/>
                 <ComboBox Grid.Column="3" Style="{StaticResource FieldComboBox}" ItemContainerStyle="{StaticResource FieldComboBoxItem}" Width="180" IsEditable="True" IsTextSearchEnabled="False"
                   IsEnabled="{Binding IsEditing}" StaysOpenOnEdit="True" ItemsSource="{Binding AvailableTagOptions}" SelectedItem="{Binding SelectedTagOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -98,9 +98,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- TODO: dependencies control -->
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Dependencies"/>
-                <TextBlock Grid.Column="1" Text="Placeholder for Dependencies" />
+                <controls:DependenciesDisplay Grid.Column="1" Dependencies="{Binding Dependencies}" ShowRemoveButton="{Binding IsEditing}" RemoveDependencyCommand="{Binding RemoveTagCommand}"/>
                 <Button Grid.Column="2" Content="Delete" Command="{Binding ConfirmDeleteTask}" Style="{StaticResource DangerButton}"/>
             </Grid>
         </Grid>

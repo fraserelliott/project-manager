@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ProjectManager.Controls.TagsDisplay"
+﻿<UserControl x:Class="ProjectManager.Controls.DependenciesDisplay"
              x:Name="Root"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,7 @@
              d:DesignHeight="450"
              d:DesignWidth="800">
 
-    <ItemsControl ItemsSource="{Binding Tags, ElementName=Root}">
+    <ItemsControl ItemsSource="{Binding Dependencies, ElementName=Root}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <WrapPanel />
@@ -20,9 +20,10 @@
             <DataTemplate>
                 <Border Style="{StaticResource Pill}" Background="{StaticResource BtnPrimaryActive}" BorderBrush="{Binding Brush, TargetNullValue={StaticResource BrushBorderSubtle}}">
                     <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="{Binding Icon}" Foreground="{Binding Brush}" Margin="0,0,8,0"/>
                         <TextBlock Style="{StaticResource PillText}" Text="{Binding Name}" />
                         <Button Background="Transparent" Foreground="{StaticResource BtnDanger}" Content="&#xE711;" Style="{StaticResource PrimaryIconButton}"
-                                Margin="8,0,0,0" FontSize="8" MinHeight="16" Command="{Binding RemoveTagCommand, ElementName=Root}" CommandParameter="{Binding Id}"
+                                Margin="8,0,0,0" FontSize="8" MinHeight="16" Command="{Binding RemoveDependencyCommand, ElementName=Root}" CommandParameter="{Binding Id}"
                                 Visibility="{Binding ShowRemoveButton, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     </StackPanel>
                 </Border>
