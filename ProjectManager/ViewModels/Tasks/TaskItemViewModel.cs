@@ -14,14 +14,9 @@ public sealed class TaskItemViewModel : ObservableObject
 {
     private readonly ProjectSession _session;
     private readonly TaskItem _task;
-    private string _dependencySearchText = "";
     private string? _draftName;
     private string? _draftPriority;
-
     private bool _editing;
-    private AddDependencyOption? _selectedDependencyOption;
-    private AddTagOption? _selectedTagOption;
-    private string _tagSearchText = "";
 
     public TaskItemViewModel(ProjectSession session, TaskItem task, TasksViewModel owner)
     {
@@ -61,76 +56,6 @@ public sealed class TaskItemViewModel : ObservableObject
             .ToList();
 
     public MarkdownViewMode MarkdownViewMode => IsEditing ? MarkdownViewMode.Raw : MarkdownViewMode.Rendered;
-
-    public string TagSearchText
-    {
-        get => _tagSearchText;
-        set
-        {
-            if (SetProperty(ref _tagSearchText, value)) OnPropertyChanged(nameof(AvailableTagOptions));
-        }
-    }
-
-    public string DependencySearchText
-    {
-        get => _dependencySearchText;
-        set
-        {
-            if (SetProperty(ref _dependencySearchText, value)) OnPropertyChanged(nameof(AvailableDependencyOptions));
-        }
-    }
-
-    public AddTagOption? SelectedTagOption
-    {
-        get => _selectedTagOption;
-        set
-        {
-            if (SetProperty(ref _selectedTagOption, value) && value is not null) HandleTagOptionSelected(value);
-        }
-    }
-
-    public AddDependencyOption? SelectedDependencyOption
-    {
-        get => _selectedDependencyOption;
-        set
-        {
-            if (SetProperty(ref _selectedDependencyOption, value) && value is not null)
-                HandleDependencyOptionSelected(value);
-        }
-    }
-
-    public IReadOnlyList<AddTagOption> AvailableTagOptions
-    {
-        get
-        {
-            List<AddTagOption> options = new();
-
-            var search = TagSearchText.Trim();
-
-            foreach (var tag in Owner.GetAllTags())
-            {
-                var alreadyOnTask = _task.TagIds.Contains(tag.Id);
-                if (alreadyOnTask)
-                    continue;
-
-                if (search.Length == 0 || tag.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
-                    options.Add(new ExistingTagOption(tag));
-            }
-
-            var exactMatchExists = options
-                .OfType<ExistingTagOption>()
-                .Any(x => string.Equals(x.Tag.Name, search, StringComparison.OrdinalIgnoreCase));
-
-            if (!string.IsNullOrWhiteSpace(search) && !exactMatchExists) options.Add(new CreateTagOption(search));
-
-            return options;
-        }
-    }
-
-    public bool HasAvailableDependencies => ComputeAvailableDependencies("").Count > 0;
-
-    public IReadOnlyList<AddDependencyOption> AvailableDependencyOptions =>
-        ComputeAvailableDependencies(DependencySearchText);
 
     public Guid Id => _task.Id;
 
@@ -227,11 +152,7 @@ public sealed class TaskItemViewModel : ObservableObject
     private void RemoveTag(Guid tagId)
     {
         var result = _session.RemoveTagFromTask(Id, tagId);
-        if (result.Success)
-        {
-            OnPropertyChanged(nameof(Tags));
-            OnPropertyChanged(nameof(AvailableTagOptions));
-        }
+        if (result.Success) OnPropertyChanged(nameof(Tags));
     }
 
     private void RemoveDependency(Guid dependencyId)
@@ -266,32 +187,6 @@ public sealed class TaskItemViewModel : ObservableObject
         return options;
     }
 
-    private void HandleTagOptionSelected(AddTagOption option)
-    {
-        switch (option)
-        {
-            case ExistingTagOption existing:
-                AddTag(existing.Tag.Id);
-                ResetTagPicker();
-                break;
-
-            case CreateTagOption create:
-                OpenCreateTagDialog(create.Name);
-                ResetTagPicker();
-                break;
-        }
-    }
-
-    private void HandleDependencyOptionSelected(AddDependencyOption option)
-    {
-        var result = _session.AddDependencyToTask(Id, option.Task.Id);
-        if (!result.Success) return;
-        var dep = _session.GetTask(option.Task.Id);
-        if (dep is null) return;
-        Dependencies.Add(new DependencyViewModel(_task, dep));
-        Owner.RefreshAll();
-    }
-
     private void OpenCreateTagDialog(string name)
     {
         var result =
@@ -309,15 +204,6 @@ public sealed class TaskItemViewModel : ObservableObject
         if (result.Success) OnPropertyChanged(nameof(Tags));
     }
 
-    private void ResetTagPicker()
-    {
-        _selectedTagOption = null;
-        _tagSearchText = "";
-        OnPropertyChanged(nameof(SelectedTagOption));
-        OnPropertyChanged(nameof(TagSearchText));
-        OnPropertyChanged(nameof(AvailableTagOptions));
-    }
-
     public void Refresh()
     {
         OnPropertyChanged(nameof(Name));
@@ -332,9 +218,6 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(NameErrorMessage));
         OnPropertyChanged(nameof(HasPriorityError));
         OnPropertyChanged(nameof(Status));
-        OnPropertyChanged(nameof(AvailableTagOptions));
-        OnPropertyChanged(nameof(AvailableDependencyOptions));
-        OnPropertyChanged(nameof(HasAvailableDependencies));
         OnPropertyChanged(nameof(Dependencies));
 
         foreach (var dependency in Dependencies) dependency.Refresh();
