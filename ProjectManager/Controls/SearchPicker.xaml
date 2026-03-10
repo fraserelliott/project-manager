@@ -5,20 +5,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="30"
              d:DesignWidth="300" x:Name="Root">
     <Grid>
-        <TextBox x:Name="SearchBox" Margin="0,0,24,0" Width="160" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="24" />
+        </Grid.ColumnDefinitions>
 
-        <Button Width="24" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0"
-                Click="Button_Click">
-            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70D;" FontSize="12"
-                       PreviewKeyDown="TextBox_OnPreviewKeyDown" />
-        </Button>
+        <TextBox Grid.Column="0" x:Name="SearchBox" Style="{StaticResource FieldTextBoxLeftRounded}"
+                 Text="{Binding SearchText, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Width="160" PreviewKeyDown="TextBox_OnPreviewKeyDown" />
 
-        <Popup IsOpen="{Binding IsPopupOpen, ElementName=Root}" PlacementTarget="{Binding ElementName=SearchBox}"
-               StaysOpen="False">
-            <ListView ItemsSource="{Binding ItemsSource, ElementName=Root}"
-                      SelectedItem="{Binding SelectedItem, ElementName=Root}"
-                      SelectedIndex="{Binding SelectedIndex, ElementName=Root}"
-                      MouseLeftButtonUp="ListView_OnMouseLeftButtonUp" />
+        <Button Grid.Column="1" VerticalAlignment="Stretch" Width="24" Click="Button_Click" Padding="2,2"
+                FontFamily="Segoe MDL2 Assets" Style="{StaticResource PrimaryButtonRightAttached}" Content="&#xE70D;" />
+
+        <Popup IsOpen="{Binding IsPopupOpen, ElementName=Root}" PlacementTarget="{Binding ElementName=Root}"
+               StaysOpen="False" Width="180">
+            <Border Background="{StaticResource DropdownBg}" BorderBrush="{StaticResource BrushBorderSubtle}"
+                    BorderThickness="1">
+                <ListView ItemsSource="{Binding ItemsSource, ElementName=Root}"
+                          SelectedItem="{Binding SelectedItem, ElementName=Root}"
+                          SelectedIndex="{Binding SelectedIndex, ElementName=Root}"
+                          MouseLeftButtonUp="ListView_OnMouseLeftButtonUp" />
+            </Border>
         </Popup>
     </Grid>
 </UserControl>

@@ -12,11 +12,13 @@ namespace ProjectManager.ViewModels.Tasks;
 
 public sealed class TaskItemViewModel : ObservableObject
 {
+    private readonly ObservableCollection<AddTagOption> _availableTagOptions = new();
     private readonly ProjectSession _session;
     private readonly TaskItem _task;
     private string? _draftName;
     private string? _draftPriority;
     private bool _editing;
+    private string _tagSearchText = string.Empty;
 
     public TaskItemViewModel(ProjectSession session, TaskItem task, TasksViewModel owner)
     {
@@ -28,6 +30,7 @@ public sealed class TaskItemViewModel : ObservableObject
         ConfirmDeleteTask = new RelayCommand(ConfirmDelete);
         RemoveTagCommand = new RelayCommand<Guid>(RemoveTag);
         RemoveDependencyCommand = new RelayCommand<Guid>(RemoveDependency);
+        AvailableTagOptions = new ReadOnlyObservableCollection<AddTagOption>(_availableTagOptions);
 
         Dependencies = new ObservableCollection<DependencyViewModel>();
         foreach (var depId in task.DependencyIds)
@@ -36,7 +39,25 @@ public sealed class TaskItemViewModel : ObservableObject
             if (dep is not null)
                 Dependencies.Add(new DependencyViewModel(task, dep));
         }
+
+        RefreshAvailableTags();
     }
+
+    public string TagSearchText
+    {
+        get => _tagSearchText;
+        set
+        {
+            if (_tagSearchText == value)
+                return;
+
+            _tagSearchText = value;
+            OnPropertyChanged();
+            RefreshAvailableTags();
+        }
+    }
+
+    public ReadOnlyObservableCollection<AddTagOption> AvailableTagOptions { get; }
 
     public ObservableCollection<DependencyViewModel> Dependencies { get; init; }
     public TasksViewModel Owner { get; }
@@ -149,6 +170,55 @@ public sealed class TaskItemViewModel : ObservableObject
 
     public bool IsNotEditing => !IsEditing;
 
+    public Func<object?, bool> TagOptionChosenHandler => HandleTagOptionChosen;
+
+    private bool HandleTagOptionChosen(object? obj)
+    {
+        if (obj is not AddTagOption option) return false;
+        switch (option)
+        {
+            case ExistingTagOption existing:
+                AddTag(existing.Tag.Id);
+                return true;
+
+            case CreateTagOption create:
+                var result = new TagDialogService().PromptNewTag(
+                    (name, color) => _session.AddTagToProject(name, color),
+                    create.Name);
+
+                var tagId = Owner.TryAddTag(result);
+                if (tagId == null) return false;
+                AddTag(tagId.Value);
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    public void RefreshAvailableTags()
+    {
+        _availableTagOptions.Clear();
+
+        var search = TagSearchText.Trim();
+
+        foreach (var option in Owner.AllTagOptions)
+        {
+            if (_task.TagIds.Contains(option.Tag.Id))
+                continue;
+
+            if (search.Length == 0 || option.Tag.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                _availableTagOptions.Add(option);
+        }
+
+        var exactMatchExists = _availableTagOptions
+            .Any(x => x is ExistingTagOption existing &&
+                      string.Equals(existing.Tag.Name, search, StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrWhiteSpace(search) && !exactMatchExists && !_session.HasTagWithName(search))
+            _availableTagOptions.Add(new CreateTagOption(search));
+    }
+
     private void RemoveTag(Guid tagId)
     {
         var result = _session.RemoveTagFromTask(Id, tagId);
@@ -187,21 +257,11 @@ public sealed class TaskItemViewModel : ObservableObject
         return options;
     }
 
-    private void OpenCreateTagDialog(string name)
-    {
-        var result =
-            new TagDialogService().PromptNewTag((name, color) => { return _session.AddTagToProject(name, color); },
-                name);
-
-        var tagId = Owner.TryAddTag(result);
-        if (tagId == null) return;
-        AddTag((Guid)tagId);
-    }
-
     private void AddTag(Guid tagId)
     {
         var result = _session.AddTagToTask(Id, tagId);
         if (result.Success) OnPropertyChanged(nameof(Tags));
+        RefreshAvailableTags();
     }
 
     public void Refresh()
@@ -219,6 +279,7 @@ public sealed class TaskItemViewModel : ObservableObject
         OnPropertyChanged(nameof(HasPriorityError));
         OnPropertyChanged(nameof(Status));
         OnPropertyChanged(nameof(Dependencies));
+        RefreshAvailableTags();
 
         foreach (var dependency in Dependencies) dependency.Refresh();
     }

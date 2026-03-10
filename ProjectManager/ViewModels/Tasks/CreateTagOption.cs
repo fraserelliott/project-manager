@@ -2,12 +2,15 @@
 
 public sealed class CreateTagOption : AddTagOption
 {
-    public string Name { get; }
-
     public CreateTagOption(string name)
     {
         Name = name;
     }
 
-    public override string DisplayText => $"Create tag \"{Name}\"";
+    public string Name { get; }
+
+    public override string ToString()
+    {
+        return $"Create tag \"{Name}\"";
+    }
 }

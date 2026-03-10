@@ -3,28 +3,25 @@
     <Style x:Key="PrimaryButtonBaseStyle" TargetType="ButtonBase">
         <Setter Property="Background" Value="{StaticResource BtnPrimary}" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
-        <Setter Property="Padding" Value="10,4"/>
-        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="10,4" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="FontFamily" Value="{StaticResource FontPrimary}" />
-        <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButtonBaseStyle}">
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Root"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="6"
-                        Padding="{TemplateBinding Padding}">
-                        <ContentPresenter
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -39,8 +36,39 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnPrimaryDisabled}" />
                             <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
-                            <Setter Property="Cursor" Value="Arrow"/>
-                            <Setter Property="Opacity" Value="0.75"/>
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter Property="Opacity" Value="0.75" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PrimaryButtonRightAttached" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="0,6,6,0"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnPrimaryHover}" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnPrimaryActive}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnPrimaryDisabled}" />
+                            <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter Property="Opacity" Value="0.75" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -49,27 +77,23 @@
     </Style>
 
     <Style x:Key="PrimaryIconButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-        <Setter Property="Padding" Value="2,2"/>
-        <Setter Property="MinHeight" Value="22"/>
-        <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-        <Setter Property="Margin" Value="0, 4"/>
+        <Setter Property="Padding" Value="2,2" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
     </Style>
 
     <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButtonBaseStyle}">
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Background" Value="{StaticResource BtnDanger}" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Root"
-                     Background="{TemplateBinding Background}"
-                     CornerRadius="6"
-                     Padding="{TemplateBinding Padding}">
-                        <ContentPresenter
-                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -84,8 +108,8 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{StaticResource BtnDangerDisabled}" />
                             <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
-                            <Setter Property="Cursor" Value="Arrow"/>
-                            <Setter Property="Opacity" Value="0.75"/>
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter Property="Opacity" Value="0.75" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -94,34 +118,31 @@
     </Style>
 
     <Style x:Key="PrimaryButtonCompact" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Padding" Value="8,2"/>
-        <Setter Property="MinWidth" Value="56"/>
-        <Setter Property="MinHeight" Value="26"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="MinWidth" Value="56" />
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
 
     <Style x:Key="TabButtonBaseStyle" TargetType="Button">
-        <Setter Property="Padding" Value="14,6"/>
-        <Setter Property="MinWidth" Value="100"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BtnPrimaryActive}"/>
-        <Setter Property="Background" Value="{StaticResource BtnPrimaryActive}"/>
-        <Setter Property="Foreground" Value="#F1F5F9"/>
-        <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="FontFamily" Value="{StaticResource FontPrimary}"/>
+        <Setter Property="Padding" Value="14,6" />
+        <Setter Property="MinWidth" Value="100" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource BtnPrimaryActive}" />
+        <Setter Property="Background" Value="{StaticResource BtnPrimaryActive}" />
+        <Setter Property="Foreground" Value="#F1F5F9" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontFamily" Value="{StaticResource FontPrimary}" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bd"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      RecognizesAccessKey="True"/>
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -129,45 +150,41 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BtnPrimaryHover}"/>
+                <Setter Property="Background" Value="{StaticResource BtnPrimaryHover}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{StaticResource BtnPrimaryActive}"/>
+                <Setter Property="Background" Value="{StaticResource BtnPrimaryActive}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" Value="{StaticResource BtnPrimaryDisabled}"/>
+                <Setter Property="Background" Value="{StaticResource BtnPrimaryDisabled}" />
             </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style x:Key="EditToggleButton" TargetType="ToggleButton" BasedOn="{StaticResource PrimaryButtonBaseStyle}">
-        <Setter Property="MinWidth" Value="110"/>
-        <Setter Property="Content" Value="Edit"/>
+        <Setter Property="MinWidth" Value="110" />
+        <Setter Property="Content" Value="Edit" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="Bd"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="6"
-                        Padding="{TemplateBinding Padding}">
-                        <ContentPresenter
-                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Bd" Property="Background"
-                                Value="{StaticResource BtnPrimaryActive}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource BtnPrimaryActive}" />
                         </Trigger>
 
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.92"/>
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.92" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.5"/>
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.5" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -176,7 +193,7 @@
 
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Content" Value="Stop Editing"/>
+                <Setter Property="Content" Value="Stop Editing" />
             </Trigger>
         </Style.Triggers>
     </Style>

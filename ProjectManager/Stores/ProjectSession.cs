@@ -1,29 +1,33 @@
-﻿using ProjectManager.Models.Domain;
-using System.Windows.Media;
+﻿using System.Windows.Media;
+using ProjectManager.Models.Domain;
 
 namespace ProjectManager.Stores;
 
 public abstract record RefreshScope;
+
 public record RefreshNone : RefreshScope;
+
 public record RefreshProject : RefreshScope;
+
 public record RefreshTask(Guid TaskId) : RefreshScope;
+
 public record RefreshTag(Guid TagId) : RefreshScope;
 
 public record OperationResult(
     bool Success,
     RefreshScope Refresh,
     string? Message = null
-    );
+);
 
 public sealed class ProjectSession
 {
-    public Project Project { get; }
-    public bool IsDirty { get; private set; }
-
     public ProjectSession(Project project)
     {
         Project = project;
     }
+
+    public Project Project { get; }
+    public bool IsDirty { get; private set; }
 
     public void Save()
     {
@@ -98,7 +102,10 @@ public sealed class ProjectSession
         return new OperationResult(true, new RefreshTask(taskId));
     }
 
-    public TaskItem? GetTask(Guid id) => Project.GetTask(id);
+    public TaskItem? GetTask(Guid id)
+    {
+        return Project.GetTask(id);
+    }
 
     public OperationResult AddTagToTask(Guid taskId, Guid tagId)
     {
@@ -118,7 +125,7 @@ public sealed class ProjectSession
     {
         name = (name ?? "").Trim();
 
-        if (String.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
             return new OperationResult(false, new RefreshNone(), "Tag name cannot be empty.");
         if (Project.HasTagWithName(name))
             return new OperationResult(false, new RefreshNone(), "A tag with this name already exists.");
@@ -131,7 +138,7 @@ public sealed class ProjectSession
     {
         newName = (newName ?? "").Trim();
 
-        if (String.IsNullOrEmpty(newName))
+        if (string.IsNullOrEmpty(newName))
             return new OperationResult(false, new RefreshNone(), "Tag name cannot be empty.");
 
         var tag = Project.GetTag(tagId);
@@ -148,7 +155,10 @@ public sealed class ProjectSession
         return new OperationResult(true, new RefreshProject());
     }
 
-    public Tag? GetTag(Guid id) => Project.GetTag(id);
+    public Tag? GetTag(Guid id)
+    {
+        return Project.GetTag(id);
+    }
 
     public bool WouldCreateCycle(Guid taskId, Guid dependencyId)
     {
@@ -215,5 +225,10 @@ public sealed class ProjectSession
         task.SetDescription(description);
         MarkDirty();
         return new OperationResult(true, new RefreshTask(taskId));
+    }
+
+    public bool HasTagWithName(string name)
+    {
+        return Project.HasTagWithName(name);
     }
 }

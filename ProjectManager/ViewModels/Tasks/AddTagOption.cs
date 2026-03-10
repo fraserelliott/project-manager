@@ -2,5 +2,5 @@
 
 public abstract class AddTagOption
 {
-    public abstract string DisplayText { get; }
+    public abstract override string ToString();
 }

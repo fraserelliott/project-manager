@@ -89,7 +89,9 @@
                                       RemoveTagCommand="{Binding RemoveTagCommand}"
                                       UpdateTagCommand="{Binding UpdateTagCommand}" />
                 <TextBlock Grid.Column="2" Style="{StaticResource HorizontalFieldLabel}" Text="Add Tag" />
-                <controls:SearchPicker Grid.Column="3" />
+                <controls:SearchPicker Grid.Column="3" ItemsSource="{Binding AvailableTagOptions}"
+                                       SearchText="{Binding TagSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                       ItemChosenHandler="{Binding TagOptionChosenHandler}" />
             </Grid>
 
             <!-- description label -->

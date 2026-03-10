@@ -1,42 +1,36 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProjectManager.Services;
 using ProjectManager.Stores;
 using ProjectManager.Views;
-using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace ProjectManager.ViewModels.Tasks;
 
 public sealed class TasksViewModel : ObservableObject
 {
-    private readonly ProjectSession _session;
-    public IRelayCommand<Guid> AdvanceStatusCommand { get; }
-    public IRelayCommand<Guid> ShowDetailsCommand { get; }
-
-    public string ProjectName => _session.Project.Name;
-
-    public ObservableCollection<TaskItemViewModel> Tasks { get; }
-    private readonly Dictionary<Guid, TaskItemViewModel> _tasksById;
+    private readonly ObservableCollection<ExistingTagOption> _allTagOptions = new();
     private readonly Dictionary<Guid, TaskDetailsWindow> _openTaskWindows = new();
+    private readonly ProjectSession _session;
+    private readonly Dictionary<Guid, TagViewModel> _tags = new();
+    private readonly Dictionary<Guid, TaskItemViewModel> _tasksById;
 
     private TaskItemViewModel? _selectedTask;
-    public TaskItemViewModel? SelectedTask
-    {
-        get => _selectedTask;
-        set => SetProperty(ref _selectedTask, value);
-    }
-
-    public IRelayCommand NewTaskCommand { get; }
-    public IRelayCommand<Guid> UpdateTagCommand { get; }
-
-    private readonly Dictionary<Guid, TagViewModel> _tags = new();
 
     public TasksViewModel(ProjectSession session, PromptService promptService)
     {
         _session = session;
         Tasks = new ObservableCollection<TaskItemViewModel>();
         _tasksById = new Dictionary<Guid, TaskItemViewModel>();
+        AllTagOptions = new ReadOnlyObservableCollection<ExistingTagOption>(_allTagOptions);
+
+        foreach (var tag in _session.Project.Tags)
+        {
+            var vm = new TagViewModel(tag);
+            _tags[tag.Id] = vm;
+            _allTagOptions.Add(new ExistingTagOption(vm));
+        }
 
         foreach (var task in _session.Project.Tasks)
         {
@@ -46,17 +40,28 @@ public sealed class TasksViewModel : ObservableObject
             _tasksById[vm.Id] = vm;
         }
 
-        foreach (var tag in _session.Project.Tags)
-        {
-            var vm = new TagViewModel(tag);
-            _tags[tag.Id] = vm;
-        }
-
-        NewTaskCommand = new RelayCommand(execute: HandleNewTask);
-        AdvanceStatusCommand = new RelayCommand<Guid>(execute: AdvanceStatus, canExecute: id => !_session.IsTaskBlocked(id));
-        ShowDetailsCommand = new RelayCommand<Guid>(execute: ShowDetails);
-        UpdateTagCommand = new RelayCommand<Guid>(execute: HandleUpdateTag);
+        NewTaskCommand = new RelayCommand(HandleNewTask);
+        AdvanceStatusCommand = new RelayCommand<Guid>(AdvanceStatus, id => !_session.IsTaskBlocked(id));
+        ShowDetailsCommand = new RelayCommand<Guid>(ShowDetails);
+        UpdateTagCommand = new RelayCommand<Guid>(HandleUpdateTag);
     }
+
+    public IRelayCommand<Guid> AdvanceStatusCommand { get; }
+    public IRelayCommand<Guid> ShowDetailsCommand { get; }
+
+    public string ProjectName => _session.Project.Name;
+
+    public ObservableCollection<TaskItemViewModel> Tasks { get; }
+    public ReadOnlyObservableCollection<ExistingTagOption> AllTagOptions { get; }
+
+    public TaskItemViewModel? SelectedTask
+    {
+        get => _selectedTask;
+        set => SetProperty(ref _selectedTask, value);
+    }
+
+    public IRelayCommand NewTaskCommand { get; }
+    public IRelayCommand<Guid> UpdateTagCommand { get; }
 
     private void Notify(OperationResult result)
     {
@@ -84,7 +89,8 @@ public sealed class TasksViewModel : ObservableObject
 
     private void HandleNewTask()
     {
-        var result = new PromptService().PromptForString("Add task", "Task name", "Add", name => _session.AddTask(name));
+        var result =
+            new PromptService().PromptForString("Add task", "Task name", "Add", name => _session.AddTask(name));
 
         if (result is not { Success: true })
             return;
@@ -137,10 +143,12 @@ public sealed class TasksViewModel : ObservableObject
 
     private void HandleUpdateTag(Guid tagId)
     {
-        if (!_tags.TryGetValue((Guid)tagId, out var vm))
+        if (!_tags.TryGetValue(tagId, out var vm))
             return;
 
-        var result = new TagDialogService().PromptTagUpdate((newName, newColor) => _session.UpdateTag(tagId, newName, newColor), vm.Name, vm.Color);
+        var result =
+            new TagDialogService().PromptTagUpdate((newName, newColor) => _session.UpdateTag(tagId, newName, newColor),
+                vm.Name, vm.Color);
         if (result is null) return;
         Notify(result);
     }
@@ -152,24 +160,20 @@ public sealed class TasksViewModel : ObservableObject
         foreach (var t in Tasks) t.Refresh();
     }
 
-    public TaskItemViewModel? GetTaskItemVM(Guid taskId) =>
-        _tasksById.TryGetValue(taskId, out var task)
-                ? task
-                : null;
+    public TaskItemViewModel? GetTaskItemVM(Guid taskId)
+    {
+        return _tasksById.TryGetValue(taskId, out var task)
+            ? task
+            : null;
+    }
 
     public void DeleteTask(Guid taskId)
     {
-        OperationResult result = _session.RemoveTask(taskId);
+        var result = _session.RemoveTask(taskId);
 
-        if (!result.Success)
-        {
-            return;
-        }
+        if (!result.Success) return;
 
-        if (_openTaskWindows.TryGetValue(taskId, out var window))
-        {
-            window.Close();
-        }
+        if (_openTaskWindows.TryGetValue(taskId, out var window)) window.Close();
 
         if (_tasksById.TryGetValue(taskId, out var task))
         {
@@ -178,7 +182,10 @@ public sealed class TasksViewModel : ObservableObject
         }
     }
 
-    public TagViewModel? GetTag(Guid id) => _tags.TryGetValue(id, out var tag) ? tag : null;
+    public TagViewModel? GetTag(Guid id)
+    {
+        return _tags.TryGetValue(id, out var tag) ? tag : null;
+    }
 
     public Guid? TryAddTag(OperationResult? result)
     {
@@ -187,12 +194,18 @@ public sealed class TasksViewModel : ObservableObject
             var tag = _session.GetTag(refreshTag.TagId);
             if (tag is null) return null;
             if (_tags.ContainsKey(refreshTag.TagId)) return null;
-            _tags.Add(refreshTag.TagId, new TagViewModel(tag));
+            var vm = new TagViewModel(tag);
+            _tags.Add(refreshTag.TagId, vm);
+            _allTagOptions.Add(new ExistingTagOption(vm));
             Notify(result);
             return refreshTag.TagId;
         }
+
         return null;
     }
 
-    public IReadOnlyList<TagViewModel> GetAllTags() => _tags.Values.ToList();
+    public IReadOnlyList<TagViewModel> GetAllTags()
+    {
+        return _tags.Values.ToList();
+    }
 }

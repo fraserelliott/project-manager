@@ -133,7 +133,7 @@ public partial class SearchPicker : UserControl
 
     private void ListView_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (SelectedItem == null || e.OriginalSource is not DependencyObject)
+        if (SelectedItem == null)
             return;
 
         var result = ItemChosenHandler?.Invoke(SelectedItem);
@@ -181,6 +181,11 @@ public partial class SearchPicker : UserControl
             case Key.Escape:
             {
                 IsPopupOpen = false;
+                break;
+            }
+            default:
+            {
+                IsPopupOpen = true;
                 break;
             }
         }
