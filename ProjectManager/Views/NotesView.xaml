@@ -22,19 +22,18 @@
                 <Button Content="New Note" Style="{StaticResource PrimaryButton}" Margin="0,0,0,8"
                         Command="{Binding NewNoteCommand}" />
             </StackPanel>
-            
+
             <TextBlock Grid.Row="1" Text="Search" Style="{StaticResource VerticalFieldLabel}" />
-            
+
             <Grid Grid.Row="2" Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                
-                <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource FieldTextBox}" Margin="0,0,0,8" />
-                <Button Grid.Column="1" Content="&#xE711;" Style="{StaticResource PrimaryIconButton}" Margin="4,0,0,0"
-                        Command="{Binding ClearSearchCommand}" />
+
+                <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center" Style="{StaticResource FieldTextBox}"
+                         Padding="6,2,22,2" />
+                <Button Content="&#xE711;" Style="{StaticResource PrimaryIconButton}" Margin="0,0,4,0"
+                        Command="{Binding ClearSearchCommand}" Width="16" Height="16" MinHeight="16" FontSize="10"
+                        HorizontalAlignment="Right"
+                        Visibility="{Binding SearchText, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
             </Grid>
 
             <ListView Grid.Row="3" ItemsSource="{Binding NotesView}" SelectedItem="{Binding SelectedNote, Mode=TwoWay}" />
