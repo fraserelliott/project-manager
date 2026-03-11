@@ -1,8 +1,8 @@
-﻿using ProjectManager.Models.Domain;
+﻿using System.Windows;
+using System.Windows.Media;
+using ProjectManager.Models.Domain;
 using ProjectManager.Stores;
 using ProjectManager.ViewModels;
-using System.Windows;
-using System.Windows.Media;
 
 namespace ProjectManager;
 
@@ -27,6 +27,8 @@ public partial class MainWindow : Window
         taskA.AddTag(tag2.Id);
 
         project.AddTag("tag not on task", Colors.Pink);
+
+        project.AddNote("my note", "# my header");
 
         var session = new ProjectSession(project);
 

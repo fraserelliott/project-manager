@@ -13,6 +13,8 @@ public record RefreshTask(Guid TaskId) : RefreshScope;
 
 public record RefreshTag(Guid TagId) : RefreshScope;
 
+public record RefreshNote(Guid NoteId) : RefreshScope;
+
 public record OperationResult(
     bool Success,
     RefreshScope Refresh,
@@ -230,5 +232,23 @@ public sealed class ProjectSession
     public bool HasTagWithName(string name)
     {
         return Project.HasTagWithName(name);
+    }
+
+    public OperationResult SetTextOnNote(Guid noteId, string newText)
+    {
+        var note = GetNote(noteId);
+        if (note is null)
+            return new OperationResult(false, new RefreshNone(), "Note not found.");
+
+        if (newText == note.Text)
+            return new OperationResult(true, new RefreshNone());
+
+        note.SetText(newText);
+        return new OperationResult(true, new RefreshNote(noteId));
+    }
+
+    public Note? GetNote(Guid noteId)
+    {
+        return Project.GetNote(noteId);
     }
 }

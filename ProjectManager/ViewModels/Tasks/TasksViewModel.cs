@@ -49,8 +49,6 @@ public sealed class TasksViewModel : ObservableObject
     public IRelayCommand<Guid> AdvanceStatusCommand { get; }
     public IRelayCommand<Guid> ShowDetailsCommand { get; }
 
-    public string ProjectName => _session.Project.Name;
-
     public ObservableCollection<TaskItemViewModel> Tasks { get; }
     public ReadOnlyObservableCollection<ExistingTagOption> AllTagOptions { get; }
 
@@ -155,7 +153,6 @@ public sealed class TasksViewModel : ObservableObject
 
     public void RefreshAll()
     {
-        OnPropertyChanged(nameof(ProjectName));
         AdvanceStatusCommand.NotifyCanExecuteChanged();
         foreach (var t in Tasks) t.Refresh();
     }

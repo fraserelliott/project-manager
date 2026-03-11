@@ -6,20 +6,20 @@
              d:DesignWidth="300" x:Name="Root">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="120" />
             <ColumnDefinition Width="24" />
         </Grid.ColumnDefinitions>
 
         <TextBox Grid.Column="0" x:Name="SearchBox" Style="{StaticResource FieldTextBoxLeftRounded}"
                  VerticalAlignment="Center" Height="30"
                  Text="{Binding SearchText, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 Width="160" PreviewKeyDown="TextBox_OnPreviewKeyDown" />
+                 Width="120" PreviewKeyDown="TextBox_OnPreviewKeyDown" />
 
         <Button Grid.Column="1" Height="30" Width="24" Click="Button_Click" Padding="2,2"
                 FontFamily="Segoe MDL2 Assets" Style="{StaticResource PrimaryButtonRightAttached}" Content="&#xE70D;" />
 
         <Popup IsOpen="{Binding IsPopupOpen, ElementName=Root}" PlacementTarget="{Binding ElementName=Root}"
-               Placement="Bottom" StaysOpen="False" Width="184" MaxHeight="300">
+               Placement="Bottom" StaysOpen="False" Width="144" MaxHeight="300">
             <Border Background="{StaticResource DropdownBg}" BorderBrush="{StaticResource BrushBorderSubtle}"
                     BorderThickness="1">
                 <ListView ItemsSource="{Binding ItemsSource, ElementName=Root}" x:Name="ResultsList"

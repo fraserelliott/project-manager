@@ -180,7 +180,7 @@
                         </Trigger>
 
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.92" />
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource BtnPrimaryHover}" />
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
