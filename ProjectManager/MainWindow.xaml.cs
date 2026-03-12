@@ -3,6 +3,7 @@ using System.Windows.Media;
 using ProjectManager.Models.Domain;
 using ProjectManager.Stores;
 using ProjectManager.ViewModels;
+using ProjectManager.Views;
 
 namespace ProjectManager;
 
@@ -11,8 +12,28 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+    }
 
-        // temporary sample data to prove bindings work
+    private void ShowDemoButton_Click(object sender, RoutedEventArgs e)
+    {
+        LaunchProject(CreateDemoProject());
+    }
+
+    private void LaunchProject(Project project)
+    {
+        var projectSession = new ProjectSession(project);
+        var projectWindow = new ProjectWindow
+        {
+            DataContext = new ProjectViewModel(projectSession)
+        };
+
+        Application.Current.MainWindow = projectWindow;
+        projectWindow.Show();
+        Close();
+    }
+
+    private Project CreateDemoProject()
+    {
         var project = new Project("My Project");
         var taskA = project.AddTask("Create context for authentication");
         var b = project.AddTask("Create login page");
@@ -30,17 +51,6 @@ public partial class MainWindow : Window
 
         project.AddNote("my note", "# my header");
 
-        var session = new ProjectSession(project);
-
-        DataContext = new ShellViewModel(session);
-
-        //var tagWindow = new TagDialog();
-        //tagWindow.DataContext = new TagDialogViewModel(TagHandle, "Edit Tag", "Save", tag.Name, tag.Color);
-        //tagWindow.Show();
-    }
-
-    private OperationResult TagHandle(string value)
-    {
-        return new OperationResult(true, new RefreshNone(), value);
+        return project;
     }
 }

@@ -40,7 +40,7 @@ public sealed class ProjectSession
     private void MarkDirty()
     {
         IsDirty = true;
-        Save(); // later: debounce/autosave
+        Save();
     }
 
     public bool IsTaskBlocked(Guid taskId)
@@ -264,6 +264,7 @@ public sealed class ProjectSession
             return new OperationResult(true, new RefreshNone());
 
         note.SetText(newText);
+        MarkDirty();
         return new OperationResult(true, new RefreshNote(noteId));
     }
 

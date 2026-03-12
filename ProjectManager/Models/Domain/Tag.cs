@@ -4,16 +4,16 @@ namespace ProjectManager.Models.Domain;
 
 public sealed class Tag
 {
-    public Guid Id { get; init; }
-    public string Name { get; private set; }
-    public Color? Color { get; private set; }
-
     public Tag(Guid id, string name, Color? color = null)
     {
         Id = id;
         Rename(name);
         Recolor(color);
     }
+
+    public Guid Id { get; init; }
+    public string Name { get; private set; }
+    public Color? Color { get; private set; }
 
     public void Rename(string newName)
     {
