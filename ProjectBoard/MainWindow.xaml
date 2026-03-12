@@ -1,0 +1,10 @@
+﻿<Window x:Class="ProjectBoard.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="ProjectBoard" Height="600" Width="1000"
+        Background="{StaticResource AppBackground}">
+    <StackPanel>
+        <Button Content="Open Demo Project" Click="ShowDemoButton_Click" Style="{StaticResource PrimaryButton}"
+                MaxWidth="180" />
+        <Button Content="Load Test Project" Click="LoadTestButton_Click" Style="{StaticResource PrimaryButton}"
+                MaxWidth="180" />
+    </StackPanel>
+</Window>

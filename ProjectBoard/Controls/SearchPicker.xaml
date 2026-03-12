@@ -1,0 +1,32 @@
+<UserControl x:Class="ProjectBoard.Controls.SearchPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="30"
+             d:DesignWidth="300" x:Name="Root">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="24" />
+        </Grid.ColumnDefinitions>
+
+        <TextBox Grid.Column="0" x:Name="SearchBox" Style="{StaticResource FieldTextBoxLeftRounded}"
+                 VerticalAlignment="Center" Height="30"
+                 Text="{Binding SearchText, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Width="120" PreviewKeyDown="TextBox_OnPreviewKeyDown" />
+
+        <Button Grid.Column="1" Height="30" Width="24" Click="Button_Click" Padding="2,2"
+                FontFamily="Segoe MDL2 Assets" Style="{StaticResource PrimaryButtonRightAttached}" Content="&#xE70D;" />
+
+        <Popup IsOpen="{Binding IsPopupOpen, ElementName=Root}" PlacementTarget="{Binding ElementName=Root}"
+               Placement="Bottom" StaysOpen="False" Width="144" MaxHeight="300">
+            <Border Background="{StaticResource DropdownBg}" BorderBrush="{StaticResource BrushBorderSubtle}"
+                    BorderThickness="1">
+                <ListView ItemsSource="{Binding ItemsSource, ElementName=Root}" x:Name="ResultsList"
+                          SelectedItem="{Binding SelectedItem, ElementName=Root, Mode=TwoWay}"
+                          SelectedIndex="{Binding SelectedIndex, ElementName=Root, Mode=TwoWay}" BorderThickness="0"
+                          Background="Transparent" MouseLeftButtonUp="ListView_OnMouseLeftButtonUp" />
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>

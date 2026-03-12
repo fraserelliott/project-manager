@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="ProjectBoard.Controls.MarkdownView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ProjectBoard.Controls" mc:Ignorable="d" d:DesignHeight="450"
+             d:DesignWidth="800"
+             xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" x:Name="Root">
+    <UserControl.Resources>
+        <Style x:Key="RawEditorStyle" TargetType="TextBox" BasedOn="{StaticResource FieldTextBox}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="AcceptsReturn" Value="True" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ViewMode, ElementName=Root}"
+                             Value="{x:Static local:MarkdownViewMode.Raw}">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="RenderedBrowserStyle" TargetType="Border">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="Background" Value="{StaticResource BrushFieldReadOnlyBackground}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ViewMode, ElementName=Root}"
+                             Value="{x:Static local:MarkdownViewMode.Rendered}">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <TextBox x:Name="Editor"
+                 Text="{Binding Text, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Style="{StaticResource RawEditorStyle}" />
+        <Border Style="{StaticResource RenderedBrowserStyle}">
+            <wv2:WebView2 x:Name="Browser" />
+        </Border>
+    </Grid>
+</UserControl>
