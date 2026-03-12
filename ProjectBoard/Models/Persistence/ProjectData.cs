@@ -1,4 +1,4 @@
-namespace ProjectBoard.Models.Domain;
+namespace ProjectBoard.Models.Persistence;
 
 public sealed class ProjectData
 {

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using ProjectBoard.Converters;
 using ProjectBoard.Models.Domain;
+using ProjectBoard.Models.Persistence;
 
 namespace ProjectBoard.Services;
 

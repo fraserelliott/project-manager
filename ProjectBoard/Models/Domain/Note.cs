@@ -1,4 +1,6 @@
-﻿namespace ProjectBoard.Models.Domain;
+﻿using ProjectBoard.Models.Persistence;
+
+namespace ProjectBoard.Models.Domain;
 
 public sealed class Note
 {

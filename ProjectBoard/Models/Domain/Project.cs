@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using ProjectBoard.Models.Persistence;
 
 namespace ProjectBoard.Models.Domain;
 

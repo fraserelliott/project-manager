@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace ProjectBoard.Models.Domain;
+namespace ProjectBoard.Models.Persistence;
 
 public class TagData
 {

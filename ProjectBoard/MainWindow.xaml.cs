@@ -72,7 +72,6 @@ public partial class MainWindow : Window
     {
         var serializer = new JsonProjectSerializer();
         var json = File.ReadAllText(filePath);
-        Console.WriteLine(json);
         var project = serializer.Deserialize(json);
 
         return new ProjectSession(

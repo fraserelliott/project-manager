@@ -1,4 +1,6 @@
-namespace ProjectBoard.Models.Domain;
+using TaskStatus = ProjectBoard.Models.Domain.TaskStatus;
+
+namespace ProjectBoard.Models.Persistence;
 
 public sealed class TaskItemData
 {
