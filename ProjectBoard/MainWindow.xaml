@@ -49,7 +49,8 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource PrimaryButton}" Margin="0,0,0,8">
+                    <Button Style="{StaticResource PrimaryButton}" Margin="0,0,0,8"
+                            Command="{Binding LoadProjectCommand}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE838;" />
                             <TextBlock Text=" Open Project" />

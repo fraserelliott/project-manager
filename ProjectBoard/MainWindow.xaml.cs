@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using ProjectBoard.Models.Domain;
@@ -25,31 +24,40 @@ public partial class MainWindow : Window
         if (DataContext is not StartupWindowViewModel vm)
             return;
 
-        if (!string.IsNullOrWhiteSpace(vm.NewProjectPath) &&
-            !string.IsNullOrWhiteSpace(vm.NewProjectName))
-            try
+        try
+        {
+            switch (vm.LaunchIntent)
             {
-                var project = new Project(vm.NewProjectName);
-                var serializer = new JsonProjectSerializer();
-                var projectSession = new ProjectSession(
-                    project,
-                    new FileProjectPersistence(vm.NewProjectPath, serializer));
+                case NewProjectIntent newProject:
+                {
+                    var project = new Project(newProject.Name);
+                    var serializer = new JsonProjectSerializer();
+                    var projectSession = new ProjectSession(
+                        project,
+                        new FileProjectPersistence(newProject.FilePath, serializer));
 
-                projectSession.SaveNow();
-                LaunchProject(projectSession);
+                    projectSession.SaveNow();
+                    LaunchProject(projectSession);
+                    Close();
+                    break;
+                }
+
+                case LoadProjectIntent loadProject:
+                    var session = LoadSession(loadProject.FilePath);
+                    if (session is null) return;
+                    LaunchProject(session);
+                    Close();
+                    break;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Failed to create project:{Environment.NewLine}{ex.Message}",
-                    "Project Creation Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
-                return;
-            }
-
-        Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Failed to launch project:{Environment.NewLine}{ex.Message}",
+                "Project Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
     }
 
     private void ShowDemoButton_Click(object sender, RoutedEventArgs e)
@@ -69,6 +77,8 @@ public partial class MainWindow : Window
 
     private void LaunchProject(ProjectSession session)
     {
+        // TODO: save recent projects
+
         var projectWindow = new ProjectWindow
         {
             DataContext = new ProjectViewModel(session)
@@ -108,20 +118,12 @@ public partial class MainWindow : Window
 
     private ProjectSession? LoadSession(string filePath)
     {
-        try
-        {
-            var serializer = new JsonProjectSerializer();
-            var json = File.ReadAllText(filePath);
-            var project = serializer.Deserialize(json);
+        var serializer = new JsonProjectSerializer();
+        var json = File.ReadAllText(filePath);
+        var project = serializer.Deserialize(json);
 
-            return new ProjectSession(
-                project,
-                new FileProjectPersistence(filePath, serializer));
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Failed to load project: {ex}");
-            return null;
-        }
+        return new ProjectSession(
+            project,
+            new FileProjectPersistence(filePath, serializer));
     }
 }

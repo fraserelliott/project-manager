@@ -6,16 +6,23 @@ using ProjectBoard.Stores;
 
 namespace ProjectBoard.ViewModels;
 
+public abstract record LaunchProjectIntent;
+
+public sealed record NewProjectIntent(string Name, string FilePath) : LaunchProjectIntent;
+
+public sealed record LoadProjectIntent(string FilePath) : LaunchProjectIntent;
+
 public class StartupWindowViewModel : ObservableObject
 {
     public StartupWindowViewModel()
     {
         NewProjectCommand = new RelayCommand(HandleNewProject);
+        LoadProjectCommand = new RelayCommand(HandleLoadProject);
     }
 
     public RelayCommand NewProjectCommand { get; }
-    public string? NewProjectName { get; private set; }
-    public string? NewProjectPath { get; private set; }
+    public RelayCommand LoadProjectCommand { get; }
+    public LaunchProjectIntent? LaunchIntent { get; private set; }
     public event Action? RequestClose;
 
     private void HandleNewProject()
@@ -41,9 +48,27 @@ public class StartupWindowViewModel : ObservableObject
         var filePath = saveFileDialog.FileName;
         if (string.IsNullOrWhiteSpace(filePath))
             return;
-        NewProjectName = name;
-        NewProjectPath = filePath;
 
+        LaunchIntent = new NewProjectIntent(name, filePath);
+
+        RequestClose?.Invoke();
+    }
+
+    private void HandleLoadProject()
+    {
+        var openFileDialog = new OpenFileDialog
+        {
+            Title = "Load Project",
+            Filter = "Project Board files (*.pbproj)|*.pbproj",
+            DefaultExt = ".pbproj"
+        };
+
+        var result = openFileDialog.ShowDialog();
+        if (result != true) return;
+
+        var filePath = openFileDialog.FileName;
+        if (string.IsNullOrWhiteSpace(filePath)) return;
+        LaunchIntent = new LoadProjectIntent(filePath);
         RequestClose?.Invoke();
     }
 
