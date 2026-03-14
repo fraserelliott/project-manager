@@ -182,6 +182,17 @@ public sealed class ProjectSession
         return new OperationResult(true, new RefreshTag(tag.Id));
     }
 
+    public OperationResult DeleteTagFromProject(Guid tagId)
+    {
+        var tag = Project.GetTag(tagId);
+        if (tag is null)
+            return new OperationResult(false, new RefreshNone(), "Tag not found");
+
+        Project.RemoveTag(tagId);
+        MarkDirty();
+        return new OperationResult(true, new RefreshProject());
+    }
+
     public OperationResult UpdateTag(Guid tagId, string newName, Color? newColor)
     {
         newName = (newName ?? "").Trim();

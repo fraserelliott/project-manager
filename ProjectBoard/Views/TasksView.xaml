@@ -34,7 +34,9 @@
                 <DataGridTemplateColumn Header="Tags">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <controls:TagsDisplay Tags="{Binding Tags}" UpdateTagCommand="{Binding UpdateTagCommand}" />
+                            <controls:TagsDisplay Tags="{Binding Tags}" UpdateTagCommand="{Binding UpdateTagCommand}"
+                                                  RemoveTagCommand="{Binding RemoveTagCommand}"
+                                                  DeleteTagCommand="{Binding DeleteTagCommand}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -86,8 +86,9 @@
 
                 <TextBlock Grid.Column="0" Style="{StaticResource HorizontalFieldLabel}" Text="Tags" />
                 <controls:TagsDisplay Grid.Column="1" Tags="{Binding Tags}" ShowRemoveButton="{Binding IsEditing}"
+                                      UpdateTagCommand="{Binding UpdateTagCommand}"
                                       RemoveTagCommand="{Binding RemoveTagCommand}"
-                                      UpdateTagCommand="{Binding UpdateTagCommand}" />
+                                      DeleteTagCommand="{Binding DeleteTagCommand}" />
                 <TextBlock Grid.Column="2" Style="{StaticResource HorizontalFieldLabel}" Text="Add Tag" />
                 <controls:SearchPicker Grid.Column="3" ItemsSource="{Binding AvailableTagOptions}"
                                        SearchText="{Binding TagSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

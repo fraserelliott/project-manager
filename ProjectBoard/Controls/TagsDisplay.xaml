@@ -21,6 +21,8 @@
                             <TextBlock.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Edit" Click="EditMenuItem_Click" />
+                                    <MenuItem Header="Remove" Click="RemoveMenuItem_Click" />
+                                    <MenuItem Header="Delete" Click="DeleteMenuItem_Click" />
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
                         </TextBlock>

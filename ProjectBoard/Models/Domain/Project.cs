@@ -173,6 +173,9 @@ public sealed class Project
 
         var idx = _tags.FindIndex(t => t.Id == tagId);
         if (idx >= 0) _tags.RemoveAt(idx);
+
+        foreach (var task in Tasks) task.RemoveTag(tagId);
+
         return true;
     }
 

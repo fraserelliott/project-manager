@@ -23,6 +23,10 @@ public partial class TagsDisplay : UserControl
     public static readonly DependencyProperty UpdateTagCommandProperty = DependencyProperty.Register
         (nameof(UpdateTagCommand), typeof(ICommand), typeof(TagsDisplay), new PropertyMetadata(null));
 
+    public static readonly DependencyProperty DeleteTagCommandProperty =
+        DependencyProperty.Register(nameof(DeleteTagCommand), typeof(ICommand), typeof(TagsDisplay),
+            new PropertyMetadata(null));
+
     public TagsDisplay()
     {
         InitializeComponent();
@@ -46,6 +50,12 @@ public partial class TagsDisplay : UserControl
         set => SetValue(RemoveTagCommandProperty, value);
     }
 
+    public ICommand? DeleteTagCommand
+    {
+        get => (ICommand?)GetValue(DeleteTagCommandProperty);
+        set => SetValue(DeleteTagCommandProperty, value);
+    }
+
     public ICommand? UpdateTagCommand
     {
         get => (ICommand?)GetValue(UpdateTagCommandProperty);
@@ -61,5 +71,27 @@ public partial class TagsDisplay : UserControl
             return;
 
         if (UpdateTagCommand?.CanExecute(tag.Id) == true) UpdateTagCommand.Execute(tag.Id);
+    }
+
+    private void RemoveMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem menuItem)
+            return;
+
+        if (menuItem.DataContext is not TagViewModel tag)
+            return;
+
+        if (RemoveTagCommand?.CanExecute(tag.Id) == true) RemoveTagCommand.Execute(tag.Id);
+    }
+
+    private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem menuItem)
+            return;
+
+        if (menuItem.DataContext is not TagViewModel tag)
+            return;
+
+        if (DeleteTagCommand?.CanExecute(tag.Id) == true) DeleteTagCommand.Execute(tag.Id);
     }
 }

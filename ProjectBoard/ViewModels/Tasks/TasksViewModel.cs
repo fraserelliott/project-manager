@@ -8,6 +8,8 @@ using ProjectBoard.Views;
 
 namespace ProjectBoard.ViewModels.Tasks;
 
+public record RemoveTagRequest(Guid TaskId, Guid TagId);
+
 public sealed class TasksViewModel : ObservableObject
 {
     private readonly ObservableCollection<ExistingTagOption> _allTagOptions = new();
@@ -44,6 +46,8 @@ public sealed class TasksViewModel : ObservableObject
         AdvanceStatusCommand = new RelayCommand<Guid>(AdvanceStatus, id => !_session.IsTaskBlocked(id));
         ShowDetailsCommand = new RelayCommand<Guid>(ShowDetails);
         UpdateTagCommand = new RelayCommand<Guid>(HandleUpdateTag);
+        RemoveTagCommand = new RelayCommand<RemoveTagRequest>(HandleRemoveTag);
+        DeleteTagCommand = new RelayCommand<Guid>(HandleDeleteTag);
     }
 
     public RelayCommand<Guid> AdvanceStatusCommand { get; }
@@ -61,6 +65,8 @@ public sealed class TasksViewModel : ObservableObject
 
     public RelayCommand NewTaskCommand { get; }
     public RelayCommand<Guid> UpdateTagCommand { get; }
+    public RelayCommand<RemoveTagRequest> RemoveTagCommand { get; }
+    public RelayCommand<Guid> DeleteTagCommand { get; }
 
     private void Notify(OperationResult result)
     {
@@ -149,6 +155,34 @@ public sealed class TasksViewModel : ObservableObject
             new TagDialogService().PromptTagUpdate((newName, newColor) => _session.UpdateTag(tagId, newName, newColor),
                 vm.Name, vm.Color);
         if (result is null) return;
+        Notify(result);
+    }
+
+    private void HandleRemoveTag(RemoveTagRequest request)
+    {
+        if (!_tasksById.TryGetValue(request.TaskId, out var taskVm))
+            return;
+
+        if (taskVm.RemoveTagCommand.CanExecute(request.TagId))
+            taskVm.RemoveTagCommand.Execute(request.TagId);
+    }
+
+    private void HandleDeleteTag(Guid tagId)
+    {
+        if (!_tags.ContainsKey(tagId))
+            return;
+
+        if (!new ConfirmDialogService().PromptConfirm(
+                "This will delete the tag and remove it from all tasks in the project. Continue?", "Yes")) return;
+
+        var result = _session.DeleteTagFromProject(tagId);
+        if (!result.Success) return;
+
+        _tags.Remove(tagId);
+        var option = _allTagOptions.FirstOrDefault(o => o.Tag.Id == tagId);
+        if (option != null)
+            _allTagOptions.Remove(option);
+
         Notify(result);
     }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProjectBoard.Controls;
@@ -80,13 +79,14 @@ public sealed class TaskItemViewModel : ObservableObject
     public bool HasAvailableDependencies => AvailableDependencies.Count > 0;
     public ObservableCollection<DependencyViewModel> Dependencies { get; init; }
     public TasksViewModel Owner { get; }
-    public IRelayCommand RestoreNameCommand { get; }
-    public IRelayCommand RestorePriorityCommand { get; }
-    public IRelayCommand ConfirmDeleteTask { get; }
-    public IRelayCommand<Guid> AdvanceStatusCommand => Owner.AdvanceStatusCommand;
-    public ICommand RemoveTagCommand { get; init; }
-    public ICommand RemoveDependencyCommand { get; init; }
-    public ICommand UpdateTagCommand => Owner.UpdateTagCommand;
+    public RelayCommand RestoreNameCommand { get; }
+    public RelayCommand RestorePriorityCommand { get; }
+    public RelayCommand ConfirmDeleteTask { get; }
+    public RelayCommand<Guid> AdvanceStatusCommand => Owner.AdvanceStatusCommand;
+    public RelayCommand<Guid> RemoveTagCommand { get; init; }
+    public RelayCommand<Guid> RemoveDependencyCommand { get; init; }
+    public RelayCommand<Guid> UpdateTagCommand => Owner.UpdateTagCommand;
+    public RelayCommand<Guid> DeleteTagCommand => Owner.DeleteTagCommand;
 
     public IReadOnlyList<TagViewModel> Tags =>
         _task.TagIds

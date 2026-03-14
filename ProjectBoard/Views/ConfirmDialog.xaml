@@ -3,16 +3,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" WindowStyle="None"
-        ShowInTaskbar="False" Background="{StaticResource AppBackground}" Foreground="{StaticResource TextPrimary}">
+        BorderBrush="{StaticResource BrushBorderSubtle}" BorderThickness="3" ShowInTaskbar="False"
+        Background="{StaticResource AppBackground}" Foreground="{StaticResource TextPrimary}">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="{Binding Label}" Margin="0,0,0,6" />
+        <TextBlock Text="{Binding Label}" Margin="0,0,0,12" />
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Cancel" MinWidth="90" Margin="0,0,8,0" IsCancel="True"
                     Style="{StaticResource PrimaryButton}" />
             <Button Content="{Binding SubmitText}" MinWidth="90" IsDefault="True" Command="{Binding SubmitCommand}"
