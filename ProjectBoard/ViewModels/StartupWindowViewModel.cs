@@ -15,7 +15,9 @@ public abstract record LaunchProjectIntent;
 
 public sealed record NewProjectIntent(string Name, string FilePath) : LaunchProjectIntent;
 
-public sealed record LoadProjectIntent(string FilePath) : LaunchProjectIntent;
+public sealed record OpenProjectIntent(string FilePath) : LaunchProjectIntent;
+
+public sealed record CloneDemoProjectIntent(string Name, string FilePath) : LaunchProjectIntent;
 
 public class StartupWindowViewModel : ObservableObject
 {
@@ -27,7 +29,8 @@ public class StartupWindowViewModel : ObservableObject
     {
         _recentProjectsService.Load();
         NewProjectCommand = new RelayCommand(HandleNewProject);
-        LoadProjectCommand = new RelayCommand(HandleLoadProject);
+        OpenProjectCommand = new RelayCommand(HandleOpenProject);
+        CloneDemoProjectCommand = new RelayCommand(HandleCloneDemoProject);
         OpenRecentProjectCommand = new RelayCommand<RecentProjectViewModel>(HandleOpenRecentProject);
         ClearSearchCommand = new RelayCommand(() => SearchText = string.Empty);
         RemoveRecentProjectCommand = new RelayCommand<RecentProjectViewModel>(RemoveRecentProject);
@@ -44,7 +47,8 @@ public class StartupWindowViewModel : ObservableObject
     public ICollectionView RecentProjectsView { get; }
     public bool HasRecentProjects => _recentProjects.Count > 0;
     public RelayCommand NewProjectCommand { get; }
-    public RelayCommand LoadProjectCommand { get; }
+    public RelayCommand OpenProjectCommand { get; }
+    public RelayCommand CloneDemoProjectCommand { get; }
     public RelayCommand<RecentProjectViewModel> OpenRecentProjectCommand { get; }
     public RelayCommand ClearSearchCommand { get; }
     public RelayCommand<RecentProjectViewModel> RemoveRecentProjectCommand { get; }
@@ -84,7 +88,7 @@ public class StartupWindowViewModel : ObservableObject
 
     private void HandleOpenRecentProject(RecentProjectViewModel vm)
     {
-        LaunchIntent = new LoadProjectIntent(vm.FilePath);
+        LaunchIntent = new OpenProjectIntent(vm.FilePath);
         RequestClose?.Invoke();
     }
 
@@ -117,7 +121,7 @@ public class StartupWindowViewModel : ObservableObject
         RequestClose?.Invoke();
     }
 
-    private void HandleLoadProject()
+    private void HandleOpenProject()
     {
         var openFileDialog = new OpenFileDialog
         {
@@ -131,7 +135,36 @@ public class StartupWindowViewModel : ObservableObject
 
         var filePath = openFileDialog.FileName;
         if (string.IsNullOrWhiteSpace(filePath)) return;
-        LaunchIntent = new LoadProjectIntent(filePath);
+        LaunchIntent = new OpenProjectIntent(filePath);
+        RequestClose?.Invoke();
+    }
+
+    private void HandleCloneDemoProject()
+    {
+        var nameResult =
+            new PromptService().PromptForString("New Project", "Project Name", "Create", ValidateProjectName);
+        if (nameResult is not { Success: true }) return;
+        if (nameResult.ResultAction is not StringResult stringResult) return;
+
+        var name = stringResult.Value.Trim();
+
+        SaveFileDialog saveFileDialog = new()
+        {
+            Title = "Clone Demo Project",
+            Filter = "Project Board files (*.pbproj)|*.pbproj",
+            DefaultExt = ".pbproj",
+            FileName = $"{name}.pbproj"
+        };
+
+        var result = saveFileDialog.ShowDialog();
+        if (result != true) return;
+
+        var filePath = saveFileDialog.FileName;
+        if (string.IsNullOrWhiteSpace(filePath))
+            return;
+
+        LaunchIntent = new CloneDemoProjectIntent(name, filePath);
+
         RequestClose?.Invoke();
     }
 

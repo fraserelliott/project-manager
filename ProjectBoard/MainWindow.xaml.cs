@@ -14,6 +14,8 @@ namespace ProjectBoard;
 
 public partial class MainWindow : Window
 {
+    public static readonly RoutedCommand CloseWindowCommand = new();
+
     public MainWindow()
     {
         InitializeComponent();
@@ -45,11 +47,27 @@ public partial class MainWindow : Window
                     break;
                 }
 
-                case LoadProjectIntent loadProject:
+                case OpenProjectIntent loadProject:
                 {
                     var projectSession = LoadSession(loadProject.FilePath);
                     if (projectSession is null) return;
                     RegisterRecentProject(vm, projectSession, loadProject.FilePath);
+                    LaunchProject(projectSession);
+                    Close();
+                    break;
+                }
+
+                case CloneDemoProjectIntent cloneDemoProject:
+                {
+                    var project = CreateDemoProject(cloneDemoProject.Name);
+                    Console.WriteLine($"Cloned project name {project.Name}, number of tasks = {project.Tasks.Count}");
+                    var serializer = new JsonProjectSerializer();
+                    var projectSession = new ProjectSession(
+                        project,
+                        new FileProjectPersistenceService(cloneDemoProject.FilePath, serializer));
+
+                    projectSession.SaveNow();
+                    RegisterRecentProject(vm, projectSession, cloneDemoProject.FilePath);
                     LaunchProject(projectSession);
                     Close();
                     break;
@@ -87,24 +105,35 @@ public partial class MainWindow : Window
             DateTime.Now);
     }
 
-    private Project CreateDemoProject()
+    private Project CreateDemoProject(string name)
     {
-        var project = new Project("My Project", Guid.NewGuid());
+        var project = new Project(name, Guid.NewGuid());
         var taskA = project.AddTask("Create context for authentication");
-        var b = project.AddTask("Create login page");
-        var c = project.AddTask("Create endpoint /api/users/login");
-        project.AddDependency(taskA.Id, b.Id);
-        project.AddDependency(b.Id, c.Id);
+        var taskB = project.AddTask("Create login page");
+        var taskC = project.AddTask("Create endpoint /api/users/login");
+        project.AddDependency(taskA.Id, taskB.Id);
+        project.AddDependency(taskB.Id, taskC.Id);
 
-        var tag = project.AddTag("test", (Color)ColorConverter.ConvertFromString("#EF4444"));
-        taskA.AddTag(tag.Id);
+        var tag = project.AddTag("backend", (Color)ColorConverter.ConvertFromString("#14B8A6"));
+        taskC.AddTag(tag.Id);
 
-        var tag2 = project.AddTag("a longer tag name", Colors.Green);
+        var tag2 = project.AddTag("frontend", (Color)ColorConverter.ConvertFromString("#6366F1"));
         taskA.AddTag(tag2.Id);
+        taskB.AddTag(tag2.Id);
 
-        project.AddTag("tag not on task", Colors.Pink);
+        var tag3 = project.AddTag("MVP", (Color)ColorConverter.ConvertFromString("#22C55E"));
+        taskA.AddTag(tag3.Id);
+        taskB.AddTag(tag3.Id);
+        taskC.AddTag(tag3.Id);
 
-        project.AddNote("my note", "# my heading");
+        var text = """
+                   # Project
+
+                   ## Design ideas
+                   - Make it work
+                   - Make it look good
+                   """;
+        project.AddNote("my note", text);
 
         return project;
     }
@@ -147,5 +176,31 @@ public partial class MainWindow : Window
         if (sender is MenuItem menuItem && menuItem.DataContext is RecentProjectViewModel recentProjectViewModel &&
             DataContext is StartupWindowViewModel vm)
             vm.RemoveRecentProjectCommand.Execute(recentProjectViewModel);
+    }
+
+    private void NewProject_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not StartupWindowViewModel vm) return;
+        if (vm.NewProjectCommand.CanExecute(null))
+            vm.NewProjectCommand.Execute(null);
+    }
+
+    private void OpenProject_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not StartupWindowViewModel vm) return;
+        if (vm.OpenProjectCommand.CanExecute(null))
+            vm.OpenProjectCommand.Execute(null);
+    }
+
+    private void CloneDemoProject_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not StartupWindowViewModel vm) return;
+        if (vm.CloneDemoProjectCommand.CanExecute(null))
+            vm.CloneDemoProjectCommand.Execute(null);
+    }
+
+    private void Exit_Click(object sender, RoutedEventArgs e)
+    {
+        Application.Current.Shutdown();
     }
 }

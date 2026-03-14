@@ -1,6 +1,17 @@
 ﻿<Window x:Class="ProjectBoard.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Project Board" Height="500" Width="700"
-        ResizeMode="CanMinimize" Background="{StaticResource AppBackground}" Foreground="{StaticResource TextPrimary}">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:ProjectBoard"
+        Title="Project Board" Height="500" Width="700" ResizeMode="CanMinimize"
+        Background="{StaticResource AppBackground}" Foreground="{StaticResource TextPrimary}">
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewProjectCommand}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenProjectCommand}" />
+        <KeyBinding Key="V" Modifiers="Control" Command="{Binding CloneDemoProjectCommand}" />
+        <KeyBinding Key="Q" Modifiers="Control" Command="{x:Static local:MainWindow.CloseWindowCommand}" />
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.CloseWindowCommand}" Executed="Exit_Click" />
+    </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -9,8 +20,12 @@
         </Grid.RowDefinitions>
 
         <Menu>
-            <MenuItem Header="_File" />
-            <MenuItem Header="_Edit" />
+            <MenuItem Header="_File">
+                <MenuItem Header="New Project" Click="NewProject_Click" InputGestureText="Ctrl+N" />
+                <MenuItem Header="Open Project" Click="OpenProject_Click" InputGestureText="Ctrl+O" />
+                <MenuItem Header="Clone Demo Project" Click="CloneDemoProject_Click" InputGestureText="Ctrl+V" />
+                <MenuItem Header="Exit" Click="Exit_Click" InputGestureText="Alt+F4" />
+            </MenuItem>
         </Menu>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20">
@@ -93,14 +108,14 @@
                     </Button>
 
                     <Button Style="{StaticResource PrimaryButton}" Margin="0,0,0,8"
-                            Command="{Binding LoadProjectCommand}">
+                            Command="{Binding OpenProjectCommand}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE838;" />
                             <TextBlock Text=" Open Project" />
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource PrimaryButton}">
+                    <Button Style="{StaticResource PrimaryButton}" Command="{Binding CloneDemoProjectCommand}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8C8;" />
                             <TextBlock Text=" Clone Demo Project" />

@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vmtasks="clr-namespace:ProjectBoard.ViewModels.Tasks"
         xmlns:vmnotes="clr-namespace:ProjectBoard.ViewModels.Notes" xmlns:views="clr-namespace:ProjectBoard.Views"
-        mc:Ignorable="d" Title="{Binding Title}" Height="600" Width="1000" Background="{StaticResource AppBackground}">
+        xmlns:local="clr-namespace:ProjectBoard.Views" mc:Ignorable="d" Title="{Binding Title}" Height="600"
+        Width="1000" Background="{StaticResource AppBackground}">
     <Window.Resources>
 
         <DataTemplate DataType="{x:Type vmtasks:TasksViewModel}">
@@ -15,6 +16,18 @@
             <views:NotesView />
         </DataTemplate>
     </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:ProjectWindow.CloseProjectCommand}" Executed="CloseProject_Click" />
+        <CommandBinding Command="{x:Static local:ProjectWindow.CloseWindowCommand}" Executed="Exit_Click" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding Tasks.NewTaskCommand}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding Notes.NewNoteCommand}" />
+        <KeyBinding Key="W" Modifiers="Control" Command="{x:Static local:ProjectWindow.CloseProjectCommand}" />
+        <KeyBinding Key="Q" Modifiers="Control" Command="{x:Static local:ProjectWindow.CloseWindowCommand}" />
+    </Window.InputBindings>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -29,9 +42,11 @@
         <!-- Menu -->
         <Menu Grid.Row="0">
             <MenuItem Header="_File">
-                <MenuItem Header="Close Project" Click="CloseProject_Click" />
+                <MenuItem Header="New Task" Click="NewTask_Click" InputGestureText="Ctrl+T" />
+                <MenuItem Header="New Note" Click="NewNote_Click" InputGestureText="Ctrl+N" />
+                <MenuItem Header="Close Project" Click="CloseProject_Click" InputGestureText="Ctrl+W" />
+                <MenuItem Header="Exit" Click="Exit_Click" InputGestureText="Ctrl+Q" />
             </MenuItem>
-            <MenuItem Header="_Edit" />
         </Menu>
 
         <!-- Tabs (top-left) -->
