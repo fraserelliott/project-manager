@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProjectBoard.Services;
 using ProjectBoard.Stores;
 using ProjectBoard.ViewModels.Notes;
 using ProjectBoard.ViewModels.Tasks;
@@ -9,14 +8,12 @@ namespace ProjectBoard.ViewModels;
 
 public sealed class ProjectViewModel : ObservableObject
 {
-    private readonly PromptService _promptService;
     private ObservableObject _currentViewModel;
 
     public ProjectViewModel(ProjectSession session)
     {
         Session = session;
-        _promptService = new PromptService();
-        Tasks = new TasksViewModel(session, _promptService);
+        Tasks = new TasksViewModel(session);
         Notes = new NotesViewModel(session);
 
         ShowTasksCommand = new RelayCommand(() => CurrentViewModel = Tasks);

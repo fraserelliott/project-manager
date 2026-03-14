@@ -18,7 +18,7 @@ public sealed class TasksViewModel : ObservableObject
 
     private TaskItemViewModel? _selectedTask;
 
-    public TasksViewModel(ProjectSession session, PromptService promptService)
+    public TasksViewModel(ProjectSession session)
     {
         _session = session;
         Tasks = new ObservableCollection<TaskItemViewModel>();

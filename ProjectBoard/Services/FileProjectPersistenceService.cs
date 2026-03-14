@@ -3,12 +3,12 @@ using ProjectBoard.Models.Domain;
 
 namespace ProjectBoard.Services;
 
-public class FileProjectPersistence : IProjectPersistence
+public class FileProjectPersistenceService : IProjectPersistenceService
 {
     private readonly string _filePath;
     private readonly IProjectSerializer _serializer;
 
-    public FileProjectPersistence(string filePath, IProjectSerializer serializer)
+    public FileProjectPersistenceService(string filePath, IProjectSerializer serializer)
     {
         _filePath = filePath;
         _serializer = serializer;

@@ -34,7 +34,7 @@ public partial class MainWindow : Window
                     var serializer = new JsonProjectSerializer();
                     var projectSession = new ProjectSession(
                         project,
-                        new FileProjectPersistence(newProject.FilePath, serializer));
+                        new FileProjectPersistenceService(newProject.FilePath, serializer));
 
                     projectSession.SaveNow();
                     LaunchProject(projectSession);
@@ -113,7 +113,7 @@ public partial class MainWindow : Window
 
     private ProjectSession CreateSession(Project project, string filePath)
     {
-        return new ProjectSession(project, new FileProjectPersistence(filePath, new JsonProjectSerializer()));
+        return new ProjectSession(project, new FileProjectPersistenceService(filePath, new JsonProjectSerializer()));
     }
 
     private ProjectSession? LoadSession(string filePath)
@@ -124,6 +124,6 @@ public partial class MainWindow : Window
 
         return new ProjectSession(
             project,
-            new FileProjectPersistence(filePath, serializer));
+            new FileProjectPersistenceService(filePath, serializer));
     }
 }

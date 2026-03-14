@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media;
 using ProjectBoard.Models.Domain;
 using ProjectBoard.Services;
+using ProjectBoard.Utils;
 
 namespace ProjectBoard.Stores;
 
@@ -26,29 +27,40 @@ public record OperationResult(
 
 public sealed class ProjectSession
 {
-    private readonly IProjectPersistence _projectPersistence;
+    private readonly IProjectPersistenceService _projectPersistenceService;
+    private readonly Debouncer _saveDebouncer;
 
-    public ProjectSession(Project project, IProjectPersistence projectPersistence)
+    public ProjectSession(Project project, IProjectPersistenceService projectPersistenceService)
     {
         Project = project;
-        _projectPersistence = projectPersistence;
+        _projectPersistenceService = projectPersistenceService;
+        _saveDebouncer = new Debouncer(750);
     }
 
     public Project Project { get; }
     public bool IsDirty { get; private set; }
 
-    public void Save()
+    private void Save()
     {
-        // TODO: debouncer
-        _projectPersistence.Save(Project);
+        _saveDebouncer.Debounce(SaveAction);
         IsDirty = false;
+    }
+
+    private void SaveAction()
+    {
+        _projectPersistenceService.Save(Project);
     }
 
     public void SaveNow()
     {
-        // TODO: debouncer
-        _projectPersistence.Save(Project);
+        _saveDebouncer.Cancel();
+        _projectPersistenceService.Save(Project);
         IsDirty = false;
+    }
+
+    public void ExecuteSaveNow()
+    {
+        _saveDebouncer.ExecuteNow();
     }
 
     private void MarkDirty()

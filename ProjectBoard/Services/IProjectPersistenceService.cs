@@ -2,7 +2,7 @@ using ProjectBoard.Models.Domain;
 
 namespace ProjectBoard.Services;
 
-public interface IProjectPersistence
+public interface IProjectPersistenceService
 {
     public void Save(Project project);
 }
