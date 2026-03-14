@@ -12,7 +12,7 @@ using ProjectBoard.Views;
 
 namespace ProjectBoard;
 
-public partial class MainWindow : Window
+public partial class MainWindow : AppWindow
 {
     public static readonly RoutedCommand CloseWindowCommand = new();
 
