@@ -26,7 +26,6 @@ public partial class MainWindow : Window
     {
         if (DataContext is not StartupWindowViewModel vm)
             return;
-
         try
         {
             switch (vm.LaunchIntent)

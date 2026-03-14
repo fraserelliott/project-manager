@@ -18,15 +18,10 @@ public partial class ProjectWindow : Window
 
         vm.Session.ExecuteSaveNow();
     }
-
-
+    
     private void CloseProject_Click(object sender, RoutedEventArgs e)
     {
-        var mainWindow = new MainWindow
-        {
-            DataContext = new StartupWindowViewModel()
-        };
-
+        var mainWindow = new MainWindow();
         Application.Current.MainWindow = mainWindow;
         mainWindow.Show();
         Close();
