@@ -37,15 +37,22 @@
                     <ListView Grid.Row="2" ItemsSource="{Binding RecentProjects}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="0,6">
-                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" />
+                                <Border MouseLeftButtonDown="RecentProject_DoubleClick">
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Open" Click="OpenRecentProject_Click" />
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+                                    <StackPanel Margin="0,6">
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" />
 
-                                    <TextBlock Text="{Binding FilePath}" Margin="0,2,0,0" Opacity="0.75"
-                                               TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding FilePath}" Margin="0,2,0,0" Opacity="0.75"
+                                                   TextTrimming="CharacterEllipsis" />
 
-                                    <TextBlock Text="{Binding LastOpenedString}" Margin="0,2,0,0" Opacity="0.65"
-                                               FontSize="11" />
-                                </StackPanel>
+                                        <TextBlock Text="{Binding LastOpenedString}" Margin="0,2,0,0" Opacity="0.65"
+                                                   FontSize="11" />
+                                    </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

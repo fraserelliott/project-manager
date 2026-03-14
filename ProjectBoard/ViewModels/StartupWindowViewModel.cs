@@ -25,6 +25,7 @@ public class StartupWindowViewModel : ObservableObject
         _recentProjectsService.Load();
         NewProjectCommand = new RelayCommand(HandleNewProject);
         LoadProjectCommand = new RelayCommand(HandleLoadProject);
+        OpenRecentProjectCommand = new RelayCommand<RecentProjectViewModel>(HandleOpenRecentProject);
         RecentProjects = new ReadOnlyObservableCollection<RecentProjectViewModel>(_recentProjects);
 
         foreach (var recentProject in _recentProjectsService.RecentProjects)
@@ -35,8 +36,15 @@ public class StartupWindowViewModel : ObservableObject
 
     public RelayCommand NewProjectCommand { get; }
     public RelayCommand LoadProjectCommand { get; }
+    public RelayCommand<RecentProjectViewModel> OpenRecentProjectCommand { get; }
     public LaunchProjectIntent? LaunchIntent { get; private set; }
     public event Action? RequestClose;
+
+    private void HandleOpenRecentProject(RecentProjectViewModel vm)
+    {
+        LaunchIntent = new LoadProjectIntent(vm.FilePath);
+        RequestClose?.Invoke();
+    }
 
     private void HandleNewProject()
     {

@@ -1,6 +1,9 @@
 ﻿using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using ProjectBoard.Models;
 using ProjectBoard.Models.Domain;
 using ProjectBoard.Services;
 using ProjectBoard.Stores;
@@ -122,5 +125,22 @@ public partial class MainWindow : Window
         return new ProjectSession(
             project,
             new FileProjectPersistenceService(filePath, serializer));
+    }
+
+    private void RecentProject_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount != 2)
+            return;
+
+        if (sender is Border border && border.DataContext is RecentProjectViewModel recentProjectViewModel &&
+            DataContext is StartupWindowViewModel vm)
+            vm.OpenRecentProjectCommand.Execute(recentProjectViewModel);
+    }
+
+    private void OpenRecentProject_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem menuItem && menuItem.DataContext is RecentProjectViewModel recentProjectViewModel &&
+            DataContext is StartupWindowViewModel vm)
+            vm.OpenRecentProjectCommand.Execute(recentProjectViewModel);
     }
 }
