@@ -9,6 +9,8 @@ public sealed record UpdatedRecentProject(Guid ProjectId) : UpdateResult;
 
 public sealed record AddedRecentProject(RecentProject RecentProject) : UpdateResult;
 
+public sealed record NoUpdateResult(string message) : UpdateResult;
+
 public class RecentProjectsService
 {
     private readonly FileProgramDataPersistenceService _persistenceService;
@@ -39,6 +41,17 @@ public class RecentProjectsService
         project.UpdateFilePath(filePath);
         project.UpdateLastOpened(lastOpened);
         SortAndTrim();
+        Save();
+        return new UpdatedRecentProject(projectId);
+    }
+
+    public UpdateResult RemoveRecentProject(Guid projectId)
+    {
+        var project = _recentProjects.FirstOrDefault(p => p.Id == projectId);
+        if (project == null)
+            return new NoUpdateResult("Could not find recent project.");
+
+        _recentProjects.Remove(project);
         Save();
         return new UpdatedRecentProject(projectId);
     }

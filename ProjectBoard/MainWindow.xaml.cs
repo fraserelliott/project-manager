@@ -141,4 +141,11 @@ public partial class MainWindow : Window
             DataContext is StartupWindowViewModel vm)
             vm.OpenRecentProjectCommand.Execute(recentProjectViewModel);
     }
+
+    private void RemoveRecentProject_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem menuItem && menuItem.DataContext is RecentProjectViewModel recentProjectViewModel &&
+            DataContext is StartupWindowViewModel vm)
+            vm.RemoveRecentProjectCommand.Execute(recentProjectViewModel);
+    }
 }

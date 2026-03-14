@@ -30,7 +30,8 @@ public class StartupWindowViewModel : ObservableObject
         LoadProjectCommand = new RelayCommand(HandleLoadProject);
         OpenRecentProjectCommand = new RelayCommand<RecentProjectViewModel>(HandleOpenRecentProject);
         ClearSearchCommand = new RelayCommand(() => SearchText = string.Empty);
-        
+        RemoveRecentProjectCommand = new RelayCommand<RecentProjectViewModel>(RemoveRecentProject);
+
         RecentProjects = new ReadOnlyObservableCollection<RecentProjectViewModel>(_recentProjects);
         RecentProjectsView = CollectionViewSource.GetDefaultView(_recentProjects);
         RecentProjectsView.Filter = FilterRecentProjects;
@@ -46,6 +47,7 @@ public class StartupWindowViewModel : ObservableObject
     public RelayCommand LoadProjectCommand { get; }
     public RelayCommand<RecentProjectViewModel> OpenRecentProjectCommand { get; }
     public RelayCommand ClearSearchCommand { get; }
+    public RelayCommand<RecentProjectViewModel> RemoveRecentProjectCommand { get; }
     public LaunchProjectIntent? LaunchIntent { get; private set; }
 
     public string SearchText
@@ -67,6 +69,17 @@ public class StartupWindowViewModel : ObservableObject
         if (string.IsNullOrEmpty(SearchText)) return true;
 
         return recentProject.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void RemoveRecentProject(RecentProjectViewModel recentProject)
+    {
+        var result = _recentProjectsService.RemoveRecentProject(recentProject.Id);
+        if (result is UpdatedRecentProject updatedRecentProject)
+        {
+            _recentProjects.Remove(recentProject);
+            RecentProjectsView.Refresh();
+            OnPropertyChanged(nameof(HasRecentProjects));
+        }
     }
 
     private void HandleOpenRecentProject(RecentProjectViewModel vm)

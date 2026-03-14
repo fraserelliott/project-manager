@@ -52,6 +52,7 @@
                                     <Border.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Open" Click="OpenRecentProject_Click" />
+                                            <MenuItem Header="Remove" Click="RemoveRecentProject_Click" />
                                         </ContextMenu>
                                     </Border.ContextMenu>
                                     <StackPanel Margin="0,6">
