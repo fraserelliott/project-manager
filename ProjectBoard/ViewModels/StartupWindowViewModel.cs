@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -19,6 +21,7 @@ public class StartupWindowViewModel : ObservableObject
 {
     private readonly ObservableCollection<RecentProjectViewModel> _recentProjects = new();
     private readonly RecentProjectsService _recentProjectsService = new();
+    private string _searchText = string.Empty;
 
     public StartupWindowViewModel()
     {
@@ -26,19 +29,45 @@ public class StartupWindowViewModel : ObservableObject
         NewProjectCommand = new RelayCommand(HandleNewProject);
         LoadProjectCommand = new RelayCommand(HandleLoadProject);
         OpenRecentProjectCommand = new RelayCommand<RecentProjectViewModel>(HandleOpenRecentProject);
+        ClearSearchCommand = new RelayCommand(() => SearchText = string.Empty);
+        
         RecentProjects = new ReadOnlyObservableCollection<RecentProjectViewModel>(_recentProjects);
+        RecentProjectsView = CollectionViewSource.GetDefaultView(_recentProjects);
+        RecentProjectsView.Filter = FilterRecentProjects;
 
         foreach (var recentProject in _recentProjectsService.RecentProjects)
             _recentProjects.Add(new RecentProjectViewModel(recentProject));
     }
 
     public ReadOnlyObservableCollection<RecentProjectViewModel> RecentProjects { get; }
+    public ICollectionView RecentProjectsView { get; }
     public bool HasRecentProjects => _recentProjects.Count > 0;
     public RelayCommand NewProjectCommand { get; }
     public RelayCommand LoadProjectCommand { get; }
     public RelayCommand<RecentProjectViewModel> OpenRecentProjectCommand { get; }
+    public RelayCommand ClearSearchCommand { get; }
     public LaunchProjectIntent? LaunchIntent { get; private set; }
+
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+                RecentProjectsView.Refresh();
+        }
+    }
+
     public event Action? RequestClose;
+
+    private bool FilterRecentProjects(object obj)
+    {
+        if (obj is not RecentProjectViewModel recentProject) return false;
+
+        if (string.IsNullOrEmpty(SearchText)) return true;
+
+        return recentProject.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+    }
 
     private void HandleOpenRecentProject(RecentProjectViewModel vm)
     {

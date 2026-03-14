@@ -34,9 +34,18 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Text="Search Recent Projects" Style="{StaticResource VerticalFieldLabel}" />
-                    <TextBox Grid.Row="1" Style="{StaticResource FieldTextBox}" />
 
-                    <ListView Grid.Row="2" ItemsSource="{Binding RecentProjects}">
+                    <Grid Grid.Row="1">
+                        <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center" Style="{StaticResource FieldTextBox}" Padding="6,2,22,2" />
+                        <Button Content="&#xE711;" Style="{StaticResource PrimaryIconButton}" Margin="0,0,4,0"
+                                Command="{Binding ClearSearchCommand}" Width="16" Height="16" MinHeight="16"
+                                FontSize="10" HorizontalAlignment="Right"
+                                Visibility="{Binding SearchText, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
+                    </Grid>
+
+
+                    <ListView Grid.Row="2" ItemsSource="{Binding RecentProjectsView}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border MouseLeftButtonDown="RecentProject_DoubleClick">
