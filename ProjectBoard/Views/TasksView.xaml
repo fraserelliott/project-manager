@@ -64,7 +64,8 @@
                         <DataTemplate>
                             <controls:TagsDisplay Tags="{Binding Tags}" UpdateTagCommand="{Binding UpdateTagCommand}"
                                                   RemoveTagCommand="{Binding RemoveTagCommand}"
-                                                  DeleteTagCommand="{Binding DeleteTagCommand}" />
+                                                  DeleteTagCommand="{Binding DeleteTagCommand}"
+                                                  VerticalAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -112,7 +113,7 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="*"
                                     ElementStyle="{StaticResource GridTextStyle}" />
-                <DataGridTemplateColumn Header="Actions">
+                <DataGridTemplateColumn Header="Details">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Details"
